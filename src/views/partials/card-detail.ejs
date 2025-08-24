@@ -10,7 +10,14 @@
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li><a href="#" onclick="toggleEditForm()">Edit Card</a></li>
-                <li><a href="#" onclick="confirmDeleteCard('<%= card.id %>')" class="text-error">Delete Card</a></li>
+                <li><a href="#" 
+                       hx-delete="/cards/<%= card.id %>"
+                       hx-confirm="Are you sure you want to delete this card? This action cannot be undone."
+                       hx-trigger="click"
+                       hx-target="body"
+                       hx-swap="none"
+                       onclick="setTimeout(() => { document.getElementById('cardDetailModal').close(); location.reload(); }, 100)"
+                       class="text-error">Delete Card</a></li>
             </ul>
         </div>
     </div>
@@ -106,7 +113,14 @@
         <div class="flex justify-between">
             <button type="button" onclick="cancelEdit()" class="btn btn-ghost">Cancel</button>
             <div class="flex gap-2">
-                <button type="button" onclick="confirmDeleteCard('<%= card.id %>')" class="btn btn-error btn-sm">Delete</button>
+                <button type="button" 
+                    hx-delete="/cards/<%= card.id %>"
+                    hx-confirm="Are you sure you want to delete this card? This action cannot be undone."
+                    hx-trigger="click"
+                    hx-target="body"
+                    hx-swap="none"
+                    onclick="setTimeout(() => { document.getElementById('cardDetailModal').close(); location.reload(); }, 100)"
+                    class="btn btn-error btn-sm">Delete</button>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
         </div>
@@ -136,16 +150,5 @@ function cancelEdit() {
     document.getElementById('editCardForm').classList.add('hidden');
 }
 
-function confirmDeleteCard(cardId) {
-    if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
-        // Use htmx to delete the card
-        htmx.ajax('DELETE', `/cards/${cardId}`, {
-            target: 'body',
-            swap: 'none'
-        }).then(() => {
-            document.getElementById('cardDetailModal').close();
-            location.reload(); // Refresh the board
-        });
-    }
-}
+// Card deletion now handled directly by htmx attributes
 </script>
