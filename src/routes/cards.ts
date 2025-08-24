@@ -24,9 +24,8 @@ const createCardSchema = z.object({
 const updateCardSchema = z.object({
   title: z.string().min(1, 'Card title is required').max(200, 'Card title too long').optional(),
   description: z.string().max(2000, 'Description too long').optional(),
-  dueDate: z.string().optional().transform((val) => {
-    if (!val) return null;
-    if (val === '') return null;
+  dueDate: z.union([z.string(), z.null()]).optional().transform((val) => {
+    if (!val || val === '') return null;
     const date = new Date(val);
     return isNaN(date.getTime()) ? null : date;
   }),
@@ -124,6 +123,12 @@ router.put('/cards/:cardId', requireAuth, async (req, res) => {
 
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true, card });
+    } else if (req.headers['hx-request']) {
+      // Return updated card partial for htmx
+      return res.render('partials/card-detail', { 
+        card, 
+        layout: false
+      });
     } else {
       return res.redirect('/dashboard');
     }

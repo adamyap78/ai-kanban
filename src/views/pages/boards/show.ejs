@@ -65,10 +65,13 @@
                     <% cardsByList[list.id].forEach(card => { %>
                         <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-base-300" 
                              data-card-id="<%= card.id %>"
+                             hx-get="/cards/<%= card.id %>"
+                             hx-target="#cardDetailContent"
+                             hx-trigger="click"
+                             onclick="document.getElementById('cardDetailModal').showModal()"
                              draggable="true"
                              ondragstart="handleDragStart(event)"
                              ondragend="handleDragEnd(event)"
-                             onclick="showCardDetail('<%= card.id %>')"
                              ondragover="event.preventDefault()">
                             <div class="card-body p-4">
                                 <h4 class="card-title text-base font-medium text-base-content"><%= card.title %></h4>
@@ -220,27 +223,7 @@ function closeAddCardModal() {
     document.getElementById('addCardModal').close();
 }
 
-// Card Detail Functions
-async function showCardDetail(cardId) {
-    const modal = document.getElementById('cardDetailModal');
-    const content = document.getElementById('cardDetailContent');
-    
-    try {
-        const response = await fetch(`/cards/${cardId}`, {
-            headers: { 'Accept': 'text/html' }
-        });
-        
-        if (response.ok) {
-            content.innerHTML = await response.text();
-            modal.showModal();
-        } else {
-            alert('Failed to load card details');
-        }
-    } catch (error) {
-        console.error('Error loading card:', error);
-        alert('Failed to load card details');
-    }
-}
+// Card Detail Functions - now handled by htmx
 
 // List Management Functions
 function editList(listId, currentName) {
