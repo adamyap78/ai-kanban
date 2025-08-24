@@ -1,6 +1,6 @@
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, desc } from 'drizzle-orm';
 import { db } from '../utils/db';
-import { boards, userOrganizations, lists } from '../db/schema';
+import { boards, userOrganizations, lists, organizations } from '../db/schema';
 
 export interface Board {
   id: string;
@@ -11,6 +11,14 @@ export interface Board {
   createdAt: Date;
   updatedAt: Date;
   archivedAt?: Date | null;
+}
+
+export interface BoardWithOrganization extends Board {
+  organization: {
+    id: string;
+    name: string;
+    slug: string;
+  };
 }
 
 export class BoardService {
@@ -205,6 +213,51 @@ export class BoardService {
       .where(eq(boards.id, boardId));
 
     console.log('✅ Board archived');
+  }
+
+  async getAllUserBoards(userId: string): Promise<BoardWithOrganization[]> {
+    console.log('📋 Getting all boards for user:', userId);
+
+    // Get all boards the user has access to across all organizations
+    const boardList = await db.select({
+      id: boards.id,
+      name: boards.name,
+      description: boards.description,
+      organizationId: boards.organizationId,
+      createdBy: boards.createdBy,
+      createdAt: boards.createdAt,
+      updatedAt: boards.updatedAt,
+      archivedAt: boards.archivedAt,
+      orgId: organizations.id,
+      orgName: organizations.name,
+      orgSlug: organizations.slug,
+    })
+      .from(boards)
+      .innerJoin(userOrganizations, eq(userOrganizations.organizationId, boards.organizationId))
+      .innerJoin(organizations, eq(organizations.id, boards.organizationId))
+      .where(and(
+        eq(userOrganizations.userId, userId),
+        isNull(boards.archivedAt)
+      ))
+      .orderBy(desc(boards.updatedAt));
+
+    console.log(`✅ Found ${boardList.length} boards for user`);
+
+    return boardList.map(board => ({
+      id: board.id,
+      name: board.name,
+      description: board.description,
+      organizationId: board.organizationId,
+      createdBy: board.createdBy,
+      createdAt: board.createdAt!,
+      updatedAt: board.updatedAt!,
+      archivedAt: board.archivedAt,
+      organization: {
+        id: board.orgId,
+        name: board.orgName,
+        slug: board.orgSlug,
+      },
+    }));
   }
 }
 

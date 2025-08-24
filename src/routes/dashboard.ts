@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { flashMessages } from '../middleware/validation';
-import { organizationService } from '../services/organization.service';
+import { boardService } from '../services/board.service';
 
 const router = Router();
 
@@ -12,14 +12,14 @@ router.use(flashMessages);
 // GET /dashboard
 router.get('/', async (req, res) => {
   try {
-    // Get user's organizations
-    const organizations = await organizationService.getUserOrganizations(req.user!.id);
+    // Get all user's boards across organizations
+    const boards = await boardService.getAllUserBoards(req.user!.id);
     
     res.render('pages/dashboard', {
       title: 'Dashboard',
       hx: false,
       user: req.user,
-      organizations,
+      boards,
     });
   } catch (error) {
     console.error('❌ Error loading dashboard:', error);

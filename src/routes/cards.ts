@@ -53,7 +53,14 @@ router.post('/cards', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       res.json({ success: true, card });
     } else {
-      res.redirect('back');
+      req.flash('success', 'Card created successfully!');
+      // Redirect back to the board page
+      const listInfo = await cardService.getListInfo(validatedData.listId);
+      if (listInfo) {
+        res.redirect(`/orgs/${listInfo.organizationSlug}/boards/${listInfo.boardId}`);
+      } else {
+        res.redirect('/dashboard');
+      }
     }
   } catch (error) {
     console.error('❌ Error creating card:', error);
@@ -62,7 +69,8 @@ router.post('/cards', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       res.status(400).json({ error: errorMessage });
     } else {
-      res.redirect('back');
+      req.flash('error', errorMessage);
+      res.redirect('/dashboard');
     }
   }
 });
@@ -84,8 +92,11 @@ router.get('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ card });
     } else {
-      // For HTML request, render card detail modal or page
-      return res.render('partials/card-detail', { card, hx: true });
+      // For HTML request, render card detail partial without layout
+      return res.render('partials/card-detail', { 
+        card, 
+        layout: false  // Don't use the main layout for partials
+      });
     }
   } catch (error) {
     console.error('❌ Error getting card:', error);
@@ -94,7 +105,7 @@ router.get('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: errorMessage });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   }
 });
@@ -114,7 +125,7 @@ router.put('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true, card });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   } catch (error) {
     console.error('❌ Error updating card:', error);
@@ -123,7 +134,7 @@ router.put('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: errorMessage });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   }
 });
@@ -163,7 +174,7 @@ router.delete('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   } catch (error) {
     console.error('❌ Error deleting card:', error);
@@ -172,7 +183,7 @@ router.delete('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: errorMessage });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   }
 });

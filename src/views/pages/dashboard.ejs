@@ -1,98 +1,103 @@
-<div class="mb-8">
-    <% if (locals.flash?.success) { %>
-        <div class="alert alert-success mb-4">
-            <%= locals.flash.success %>
-        </div>
-    <% } %>
-    
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-base-content mb-2">Welcome back, <%= user.name %>!</h1>
-            <p class="text-base-content/70">Manage your projects and collaborate with your team</p>
-        </div>
-        
-        <div>
-            <form method="POST" action="/auth/logout" class="inline">
-                <button type="submit" class="btn btn-outline">Sign Out</button>
-            </form>
-        </div>
+<!-- Header Section -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-base-content mb-2">Your Boards</h1>
+        <p class="text-base-content/70">Select a board to start working</p>
+    </div>
+    <div class="flex gap-3">
+        <a href="/orgs/new" class="btn btn-primary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Create Board
+        </a>
     </div>
 </div>
 
-<div class="grid gap-8 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mb-12">
-    <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h3 class="card-title text-lg">📊 Your Organizations</h3>
-            <% if (organizations && organizations.length > 0) { %>
-                <div class="space-y-2">
-                    <% organizations.forEach(org => { %>
-                        <div class="p-3 bg-base-200 rounded-lg border-l-4 border-primary">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="font-medium text-base-content"><%= org.name %></h4>
-                                    <p class="text-sm text-base-content/70">Role: <%= org.userRole %></p>
-                                </div>
-                                <a href="/orgs/<%= org.slug %>" class="btn btn-sm btn-primary">View</a>
-                            </div>
-                        </div>
-                    <% }) %>
+<!-- Flash Messages -->
+<% if (locals.flash?.success) { %>
+    <div class="alert alert-success mb-6">
+        <%= locals.flash.success %>
+    </div>
+<% } %>
+
+<% if (locals.flash?.error) { %>
+    <div class="alert alert-error mb-6">
+        <%= locals.flash.error %>
+    </div>
+<% } %>
+
+<!-- Boards Grid -->
+<% if (boards && boards.length > 0) { %>
+    <div class="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+        <% boards.forEach(board => { %>
+            <a href="/orgs/<%= board.organization.slug %>/boards/<%= board.id %>" 
+               class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300 hover:border-primary/50">
+                <div class="card-body p-6">
+                    <div class="flex justify-between items-start mb-3">
+                        <h2 class="card-title text-lg text-base-content"><%= board.name %></h2>
+                        <div class="badge badge-outline badge-sm"><%= board.organization.name %></div>
+                    </div>
+                    
+                    <% if (board.description) { %>
+                        <p class="text-base-content/70 text-sm mb-4 line-clamp-2"><%= board.description %></p>
+                    <% } else { %>
+                        <p class="text-base-content/50 text-sm mb-4 italic">No description</p>
+                    <% } %>
+                    
+                    <div class="flex justify-between items-center text-xs text-base-content/50">
+                        <span>Updated <%= new Date(board.updatedAt).toLocaleDateString() %></span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
                 </div>
-            <% } else { %>
-                <p class="text-base-content/70 italic">No organizations yet</p>
-            <% } %>
-            <div class="card-actions justify-start mt-4">
-                <a href="/orgs/new" class="btn btn-success btn-sm">+ Create Organization</a>
+            </a>
+        <% }); %>
+    </div>
+<% } else { %>
+    <!-- Empty State -->
+    <div class="text-center py-16">
+        <div class="max-w-md mx-auto">
+            <div class="text-6xl mb-6">🎯</div>
+            <h3 class="text-2xl font-semibold text-base-content mb-4">No boards yet</h3>
+            <p class="text-base-content/70 mb-8">Create your first board to start organizing your work</p>
+            <div class="space-y-4">
+                <a href="/orgs/new" class="btn btn-primary btn-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Create Your First Board
+                </a>
+                <div class="text-sm text-base-content/50">
+                    You'll need to create an organization first
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h3 class="card-title text-lg">🎯 Recent Boards</h3>
-            <p class="text-base-content/70 italic">No recent boards</p>
-            <div class="card-actions justify-start mt-4">
-                <button class="btn btn-neutral btn-sm" disabled>Create Board</button>
-                <p class="text-xs text-base-content/50 mt-2">Create an organization first</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h3 class="card-title text-lg">🤖 AI Features</h3>
-            <ul class="text-base-content/70 text-sm space-y-1">
-                <li>Smart card creation</li>
-                <li>Intelligent categorization</li>
-                <li>Progress insights</li>
-                <li>Semantic search</li>
-            </ul>
-            <div class="card-actions justify-start mt-4">
-                <button class="btn btn-secondary btn-sm" disabled>Coming Soon</button>
-            </div>
-        </div>
-    </div>
-</div>
+<% } %>
 
-<div class="card bg-base-100 shadow-xl">
-    <div class="card-body">
-        <h3 class="card-title text-lg">🚀 Quick Start</h3>
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="p-4 border border-base-300 rounded-lg">
-                <h4 class="font-medium mb-2 text-base-content">1. Create Organization</h4>
-                <p class="text-sm text-base-content/70">Set up your team workspace</p>
+<!-- Quick Stats (if boards exist) -->
+<% if (boards && boards.length > 0) { %>
+    <div class="mt-12 pt-8 border-t border-base-300">
+        <div class="stats stats-horizontal shadow-sm">
+            <div class="stat">
+                <div class="stat-title">Total Boards</div>
+                <div class="stat-value text-primary"><%= boards.length %></div>
+                <div class="stat-desc">Across all organizations</div>
             </div>
-            <div class="p-4 border border-base-300 rounded-lg">
-                <h4 class="font-medium mb-2 text-base-content">2. Create Board</h4>
-                <p class="text-sm text-base-content/70">Start your first project</p>
+            
+            <div class="stat">
+                <div class="stat-title">Organizations</div>
+                <div class="stat-value text-secondary"><%= [...new Set(boards.map(b => b.organization.id))].length %></div>
+                <div class="stat-desc">Workspaces you belong to</div>
             </div>
-            <div class="p-4 border border-base-300 rounded-lg">
-                <h4 class="font-medium mb-2 text-base-content">3. Add Cards</h4>
-                <p class="text-sm text-base-content/70">Create tasks and get organized</p>
-            </div>
-            <div class="p-4 border border-base-300 rounded-lg">
-                <h4 class="font-medium mb-2 text-base-content">4. Use AI Features</h4>
-                <p class="text-sm text-base-content/70">Let AI help boost productivity</p>
+            
+            <div class="stat">
+                <div class="stat-title">Most Recent</div>
+                <div class="stat-value text-accent text-sm"><%= boards[0].name %></div>
+                <div class="stat-desc">Updated <%= new Date(boards[0].updatedAt).toLocaleDateString() %></div>
             </div>
         </div>
     </div>
-</div>
+<% } %>

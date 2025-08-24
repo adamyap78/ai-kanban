@@ -1,6 +1,6 @@
 import { eq, and, asc } from 'drizzle-orm';
 import { db } from '../utils/db';
-import { lists, boards, userOrganizations } from '../db/schema';
+import { lists, boards, userOrganizations, organizations } from '../db/schema';
 
 export interface List {
   id: string;
@@ -194,6 +194,18 @@ export class ListService {
     await db.delete(lists).where(eq(lists.id, listId));
 
     console.log('✅ List deleted');
+  }
+
+  async getBoardInfo(boardId: string): Promise<{ organizationSlug: string } | null> {
+    const result = await db.select({
+      organizationSlug: organizations.slug,
+    })
+      .from(boards)
+      .innerJoin(organizations, eq(organizations.id, boards.organizationId))
+      .where(eq(boards.id, boardId))
+      .limit(1);
+
+    return result.length > 0 ? result[0]! : null;
   }
 }
 

@@ -1,6 +1,6 @@
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { db } from '../utils/db';
-import { cards, lists, boards, userOrganizations, users } from '../db/schema';
+import { cards, lists, boards, userOrganizations, users, organizations } from '../db/schema';
 
 export interface Card {
   id: string;
@@ -374,6 +374,20 @@ export class CardService {
     await db.delete(cards).where(eq(cards.id, cardId));
 
     console.log('✅ Card deleted');
+  }
+
+  async getListInfo(listId: string): Promise<{ boardId: string; organizationSlug: string } | null> {
+    const result = await db.select({
+      boardId: boards.id,
+      organizationSlug: organizations.slug,
+    })
+      .from(lists)
+      .innerJoin(boards, eq(boards.id, lists.boardId))
+      .innerJoin(organizations, eq(organizations.id, boards.organizationId))
+      .where(eq(lists.id, listId))
+      .limit(1);
+
+    return result.length > 0 ? result[0]! : null;
   }
 }
 

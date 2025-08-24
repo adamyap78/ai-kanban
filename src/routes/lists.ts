@@ -34,11 +34,18 @@ router.post('/lists', requireAuth, async (req, res) => {
       userId: req.user!.id,
     });
 
-    const orgSlug = req.params.orgSlug;
-    res.redirect(`/orgs/${orgSlug || 'unknown'}/boards/${validatedData.boardId}`);
+    // Get board info for redirect
+    const boardInfo = await listService.getBoardInfo(validatedData.boardId);
+    if (boardInfo) {
+      req.flash('success', 'List created successfully!');
+      res.redirect(`/orgs/${boardInfo.organizationSlug}/boards/${validatedData.boardId}`);
+    } else {
+      res.redirect('/dashboard');
+    }
   } catch (error) {
     console.error('❌ Error creating list:', error);
-    res.redirect('back');
+    req.flash('error', error instanceof Error ? error.message : 'Failed to create list');
+    res.redirect('/dashboard');
   }
 });
 
@@ -59,14 +66,14 @@ router.put('/lists/:listId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true, list });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   } catch (error) {
     console.error('❌ Error updating list:', error);
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to update list' });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   }
 });
@@ -103,14 +110,14 @@ router.delete('/lists/:listId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   } catch (error) {
     console.error('❌ Error deleting list:', error);
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: error instanceof Error ? error.message : 'Failed to delete list' });
     } else {
-      return res.redirect('back');
+      return res.redirect('/dashboard');
     }
   }
 });

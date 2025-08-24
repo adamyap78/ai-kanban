@@ -79,3 +79,4 @@ src/
 - **Main branch**: `main`
 - **Status**: Clean working tree
 - **Recent progress**: Views converted to DaisyUI components
+- Don't add Emojis to interfaces in the app with being expressly told to

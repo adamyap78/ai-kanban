@@ -65,7 +65,11 @@
                     <% cardsByList[list.id].forEach(card => { %>
                         <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-base-300" 
                              data-card-id="<%= card.id %>"
-                             onclick="showCardDetail('<%= card.id %>')">
+                             draggable="true"
+                             ondragstart="handleDragStart(event)"
+                             ondragend="handleDragEnd(event)"
+                             onclick="showCardDetail('<%= card.id %>')"
+                             ondragover="event.preventDefault()">
                             <div class="card-body p-4">
                                 <h4 class="card-title text-base font-medium text-base-content"><%= card.title %></h4>
                                 <% if (card.description) { %>
