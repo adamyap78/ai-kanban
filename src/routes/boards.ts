@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { boardService } from '../services/board.service';
 import { organizationService } from '../services/organization.service';
+import { listService } from '../services/list.service';
+import { cardService } from '../services/card.service';
 import { createBoardSchema } from '../utils/validation';
 import { validateBody, flashMessages } from '../middleware/validation';
 import { requireAuth } from '../middleware/auth';
@@ -127,11 +129,17 @@ router.get('/:orgSlug/boards/:boardId', async (req, res) => {
       });
     }
 
+    // Load lists and cards for the board
+    const lists = await listService.getByBoard(boardId, req.user!.id);
+    const cardsByList = await cardService.getByBoard(boardId, req.user!.id);
+
     res.render('pages/boards/show', {
       title: board.name,
-      hx: false,
+      hx: true, // Enable htmx for drag-and-drop functionality
       organization,
       board,
+      lists,
+      cardsByList,
     });
   } catch (error) {
     console.error('❌ Error loading board:', error);

@@ -19,6 +19,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"], // for htmx and inline scripts
+      scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers like onclick
       imgSrc: ["'self'", "data:", "https:"],
     },
   },
@@ -56,6 +57,8 @@ import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
 import organizationRoutes from './routes/organizations';
 import boardRoutes from './routes/boards';
+import listRoutes from './routes/lists';
+import cardRoutes from './routes/cards';
 import { extractUser } from './middleware/auth';
 import { validateReferer } from './middleware/validation';
 
@@ -82,6 +85,8 @@ app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/orgs', organizationRoutes);
 app.use('/orgs', boardRoutes);
+app.use('/', listRoutes);
+app.use('/', cardRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {

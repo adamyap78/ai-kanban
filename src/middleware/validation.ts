@@ -41,6 +41,19 @@ export const flashMessages = (req: Request, res: Response, next: NextFunction) =
     success: req.query.success || null,
     error: req.query.error || null,
   };
+  
+  // Add flash method to request
+  req.flash = (type: string, message: string) => {
+    // For now, we'll just store it for redirect
+    // This is a simple implementation - in production use express-session
+    const encodedMessage = encodeURIComponent(message);
+    if (type === 'success') {
+      res.locals.redirectQuery = `?success=${encodedMessage}`;
+    } else if (type === 'error') {
+      res.locals.redirectQuery = `?error=${encodedMessage}`;
+    }
+  };
+  
   next();
 };
 

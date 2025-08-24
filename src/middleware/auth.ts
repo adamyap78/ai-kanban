@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService, AuthUser } from '../services/auth.service';
 
-// Extend Express Request type to include user
+// Extend Express Request type to include user and flash
 declare global {
   namespace Express {
     interface Request {
       user?: AuthUser;
+      flash: (type: string, message: string) => void;
     }
   }
 }
