@@ -1,0 +1,95 @@
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center;">
+            <a href="/dashboard" style="color: #6b7280; text-decoration: none; margin-right: 1rem;">← Dashboard</a>
+            <h1 style="margin: 0; color: #1f2937;"><%= organization.name %></h1>
+        </div>
+        
+        <div style="margin-left: auto;">
+            <% if (['owner', 'admin'].includes(organization.userRole)) { %>
+                <a href="/orgs/<%= organization.slug %>/settings" class="btn" style="background: #6b7280; margin-right: 0.5rem; font-size: 0.875rem;">Settings</a>
+            <% } %>
+            <a href="/orgs/<%= organization.slug %>/boards/new" class="btn" style="background: #059669; font-size: 0.875rem;">+ New Board</a>
+        </div>
+    </div>
+    
+    <% if (locals.flash?.success) { %>
+        <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+            <%= locals.flash.success %>
+        </div>
+    <% } %>
+    
+    <% if (locals.flash?.error) { %>
+        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+            <%= locals.flash.error %>
+        </div>
+    <% } %>
+</div>
+
+<div style="display: grid; gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Organization Info -->
+    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="margin: 0; font-size: 1.125rem; color: #1f2937;">Organization Details</h2>
+            <span style="background: #f3f4f6; color: #374151; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500;">
+                <%= organization.userRole %>
+            </span>
+        </div>
+        <p style="color: #6b7280; margin: 0;">
+            <strong>Created:</strong> <%= new Date(organization.createdAt).toLocaleDateString() %>
+        </p>
+        <p style="color: #6b7280; margin: 0.5rem 0 0 0;">
+            <strong>URL:</strong> /orgs/<%= organization.slug %>
+        </p>
+    </div>
+</div>
+
+<!-- Boards Section -->
+<div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-size: 1.25rem; color: #1f2937;">📋 Boards</h2>
+        <a href="/orgs/<%= organization.slug %>/boards/new" class="btn" style="background: #059669; font-size: 0.875rem;">+ Create Board</a>
+    </div>
+    
+    <% if (boards && boards.length > 0) { %>
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            <% boards.forEach(board => { %>
+                <div style="border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 1rem; transition: all 0.2s;">
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.125rem;">
+                        <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>" style="color: #1f2937; text-decoration: none;">
+                            <%= board.name %>
+                        </a>
+                    </h3>
+                    <% if (board.description) { %>
+                        <p style="color: #6b7280; margin: 0 0 0.75rem 0; font-size: 0.875rem; line-height: 1.4;">
+                            <%= board.description %>
+                        </p>
+                    <% } %>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #9ca3af;">
+                        <span>Created <%= new Date(board.createdAt).toLocaleDateString() %></span>
+                        <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>/settings" style="color: #6b7280; text-decoration: none;">Settings</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div style="text-align: center; padding: 3rem 0; color: #6b7280;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.125rem; color: #374151;">No boards yet</h3>
+            <p style="margin: 0 0 1.5rem 0;">Create your first board to start organizing your work</p>
+            <a href="/orgs/<%= organization.slug %>/boards/new" class="btn" style="background: #059669;">Create Your First Board</a>
+        </div>
+    <% } %>
+</div>
+
+<% if (['owner', 'admin'].includes(organization.userRole)) { %>
+    <!-- Quick Actions -->
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #f9fafb; border-radius: 0.5rem;">
+        <h3 style="margin: 0 0 1rem 0; font-size: 1.125rem; color: #374151;">Quick Actions</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="/orgs/<%= organization.slug %>/boards/new" class="btn" style="background: #059669; font-size: 0.875rem;">Create New Board</a>
+            <a href="/orgs/<%= organization.slug %>/settings" class="btn" style="background: #6b7280; font-size: 0.875rem;">Organization Settings</a>
+            <button class="btn" style="background: #9ca3af; font-size: 0.875rem;" disabled>Invite Members (Coming Soon)</button>
+        </div>
+    </div>
+<% } %>

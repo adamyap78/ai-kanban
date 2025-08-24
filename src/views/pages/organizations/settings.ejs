@@ -1,0 +1,106 @@
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
+        <a href="/orgs/<%= organization.slug %>" style="color: #6b7280; text-decoration: none; margin-right: 1rem;">← <%= organization.name %></a>
+        <h1 style="margin: 0; color: #1f2937;">Organization Settings</h1>
+    </div>
+    
+    <% if (locals.flash?.success) { %>
+        <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+            <%= locals.flash.success %>
+        </div>
+    <% } %>
+    
+    <% if (locals.flash?.error) { %>
+        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+            <%= locals.flash.error %>
+        </div>
+    <% } %>
+    
+    <% if (errors && errors.length > 0) { %>
+        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+            <ul style="margin: 0; padding-left: 1rem;">
+                <% errors.forEach(error => { %>
+                    <li><%= error.message %></li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+    
+    <!-- Basic Settings -->
+    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem; color: #1f2937;">Basic Information</h2>
+        
+        <form method="POST" action="/orgs/<%= organization.slug %>/settings">
+            <div style="margin-bottom: 1.5rem;">
+                <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Organization Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    value="<%= oldInput.name || organization.name %>"
+                    required
+                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;"
+                    placeholder="Enter organization name"
+                >
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">URL Slug</label>
+                <div style="display: flex; align-items: center; border: 1px solid #d1d5db; border-radius: 0.375rem; background: #f9fafb;">
+                    <span style="padding: 0.75rem; color: #6b7280; border-right: 1px solid #d1d5db;">
+                        localhost:3000/orgs/
+                    </span>
+                    <span style="flex: 1; padding: 0.75rem; color: #9ca3af;">
+                        <%= organization.slug %>
+                    </span>
+                </div>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+                    URL slugs cannot be changed after creation
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="/orgs/<%= organization.slug %>" class="btn" style="background: #6b7280;">Cancel</a>
+                <button type="submit" class="btn" style="background: #3b82f6;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Organization Info -->
+    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem; color: #1f2937;">Organization Details</h2>
+        
+        <dl style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <div>
+                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Created</dt>
+                <dd style="margin: 0; font-weight: 500; color: #1f2937;"><%= new Date(organization.createdAt).toLocaleDateString() %></dd>
+            </div>
+            <div>
+                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Your Role</dt>
+                <dd style="margin: 0;">
+                    <span style="background: #f3f4f6; color: #374151; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500;">
+                        <%= organization.userRole %>
+                    </span>
+                </dd>
+            </div>
+            <div>
+                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">URL</dt>
+                <dd style="margin: 0; font-weight: 500; color: #1f2937; font-family: monospace; font-size: 0.875rem;">/orgs/<%= organization.slug %></dd>
+            </div>
+        </dl>
+    </div>
+    
+    <!-- Coming Soon Features -->
+    <div style="background: #f9fafb; padding: 2rem; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+        <h2 style="margin: 0 0 1rem 0; font-size: 1.25rem; color: #374151;">Coming Soon</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Additional organization management features will be available soon:</p>
+        
+        <ul style="color: #6b7280; line-height: 1.6; margin: 0; padding-left: 1.25rem;">
+            <li>Invite and manage team members</li>
+            <li>Role-based permissions</li>
+            <li>Organization avatar and branding</li>
+            <li>Usage analytics and billing</li>
+            <li>Integration with external tools</li>
+        </ul>
+    </div>
+</div>

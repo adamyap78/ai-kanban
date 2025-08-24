@@ -22,13 +22,13 @@
 <div style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 3rem;">
     <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
         <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1f2937;">📊 Your Organizations</h3>
-        <% if (user.organizations && user.organizations.length > 0) { %>
-            <% user.organizations.forEach(org => { %>
+        <% if (organizations && organizations.length > 0) { %>
+            <% organizations.forEach(org => { %>
                 <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.375rem; border-left: 4px solid #3b82f6;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <h4 style="font-weight: 500; color: #1f2937;"><%= org.name %></h4>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Role: <%= org.role %></p>
+                            <p style="font-size: 0.875rem; color: #6b7280;">Role: <%= org.userRole %></p>
                         </div>
                         <a href="/orgs/<%= org.slug %>" class="btn" style="font-size: 0.875rem; padding: 0.5rem 0.75rem;">View</a>
                     </div>

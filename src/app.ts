@@ -54,6 +54,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Import routes
 import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
+import organizationRoutes from './routes/organizations';
+import boardRoutes from './routes/boards';
 import { extractUser } from './middleware/auth';
 import { validateReferer } from './middleware/validation';
 
@@ -78,6 +80,8 @@ app.use((req, res, next) => {
 // Routes
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/orgs', organizationRoutes);
+app.use('/orgs', boardRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {
