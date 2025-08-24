@@ -1,24 +1,24 @@
-<div style="max-width: 600px; margin: 2rem auto;">
-    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-        <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>" style="color: #6b7280; text-decoration: none; margin-right: 1rem;">← <%= board.name %></a>
-        <h1 style="margin: 0; color: #1f2937;">Board Settings</h1>
+<div class="w-full max-w-2xl mx-auto mt-8">
+    <div class="flex items-center mb-8">
+        <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>" class="link text-base-content/70 mr-4">← <%= board.name %></a>
+        <h1 class="text-3xl font-bold text-base-content">Board Settings</h1>
     </div>
     
     <% if (locals.flash?.success) { %>
-        <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+        <div class="alert alert-success mb-4">
             <%= locals.flash.success %>
         </div>
     <% } %>
     
     <% if (locals.flash?.error) { %>
-        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+        <div class="alert alert-error mb-4">
             <%= locals.flash.error %>
         </div>
     <% } %>
     
     <% if (errors && errors.length > 0) { %>
-        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
-            <ul style="margin: 0; padding-left: 1rem;">
+        <div class="alert alert-error mb-4">
+            <ul class="list-disc ml-4">
                 <% errors.forEach(error => { %>
                     <li><%= error.message %></li>
                 <% }) %>
@@ -26,74 +26,81 @@
         </div>
     <% } %>
     
-    <!-- Basic Settings -->
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-        <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem; color: #1f2937;">Board Information</h2>
-        
-        <form method="POST" action="/orgs/<%= organization.slug %>/boards/<%= board.id %>/settings">
-            <div style="margin-bottom: 1.5rem;">
-                <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Board Name</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
-                    value="<%= oldInput.name || board.name %>"
-                    required
-                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;"
-                    placeholder="Enter board name"
-                >
-            </div>
+    <div class="card bg-base-100 shadow-xl mb-8">
+        <div class="card-body">
+            <h2 class="card-title text-xl mb-6">Board Information</h2>
             
-            <div style="margin-bottom: 2rem;">
-                <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Description</label>
-                <textarea 
-                    id="description" 
-                    name="description" 
-                    rows="4"
-                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem; resize: vertical;"
-                    placeholder="What's this board for? Any important details or goals..."
-                ><%= oldInput.description || board.description || '' %></textarea>
-            </div>
+            <form method="POST" action="/orgs/<%= organization.slug %>/boards/<%= board.id %>/settings">
+                <div class="form-control mb-6">
+                    <label for="name" class="label">
+                        <span class="label-text">Board Name</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value="<%= oldInput.name || board.name %>"
+                        required
+                        class="input input-bordered w-full"
+                        placeholder="Enter board name"
+                    >
+                </div>
             
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>" class="btn" style="background: #6b7280;">Cancel</a>
-                <button type="submit" class="btn" style="background: #3b82f6;">Save Changes</button>
-            </div>
-        </form>
+                <div class="form-control mb-8">
+                    <label for="description" class="label">
+                        <span class="label-text">Description</span>
+                    </label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        rows="4"
+                        class="textarea textarea-bordered w-full"
+                        placeholder="What's this board for? Any important details or goals..."
+                    ><%= oldInput.description || board.description || '' %></textarea>
+                </div>
+            
+                <div class="card-actions justify-end">
+                    <a href="/orgs/<%= organization.slug %>/boards/<%= board.id %>" class="btn btn-neutral">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
     
-    <!-- Board Details -->
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-        <h2 style="margin: 0 0 1.5rem 0; font-size: 1.25rem; color: #1f2937;">Board Details</h2>
-        
-        <dl style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <div>
-                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Created</dt>
-                <dd style="margin: 0; font-weight: 500; color: #1f2937;"><%= new Date(board.createdAt).toLocaleDateString() %></dd>
+    <div class="card bg-base-100 shadow-xl mb-8">
+        <div class="card-body">
+            <h2 class="card-title text-xl mb-6">Board Details</h2>
+            
+            <div class="grid gap-4 grid-cols-1 md:grid-cols-3">
+                <div>
+                    <div class="text-sm text-base-content/70 mb-1">Created</div>
+                    <div class="font-medium"><%= new Date(board.createdAt).toLocaleDateString() %></div>
+                </div>
+                <div>
+                    <div class="text-sm text-base-content/70 mb-1">Last Updated</div>
+                    <div class="font-medium"><%= new Date(board.updatedAt).toLocaleDateString() %></div>
+                </div>
+                <div>
+                    <div class="text-sm text-base-content/70 mb-1">Organization</div>
+                    <div class="font-medium"><%= organization.name %></div>
+                </div>
             </div>
-            <div>
-                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Last Updated</dt>
-                <dd style="margin: 0; font-weight: 500; color: #1f2937;"><%= new Date(board.updatedAt).toLocaleDateString() %></dd>
-            </div>
-            <div>
-                <dt style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Organization</dt>
-                <dd style="margin: 0; font-weight: 500; color: #1f2937;"><%= organization.name %></dd>
-            </div>
-        </dl>
+        </div>
     </div>
     
-    <!-- Danger Zone -->
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #dc2626;">
-        <h2 style="margin: 0 0 1rem 0; font-size: 1.25rem; color: #dc2626;">Danger Zone</h2>
-        <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5;">
-            Archive this board to remove it from your organization. All cards and lists will be preserved but hidden.
-            Archived boards can be restored later.
-        </p>
-        
-        <form method="POST" action="/orgs/<%= organization.slug %>/boards/<%= board.id %>/archive" onsubmit="return confirm('Are you sure you want to archive this board? All cards and lists will be hidden.')">
-            <button type="submit" class="btn" style="background: #dc2626; color: white;">
-                Archive Board
-            </button>
-        </form>
+    <div class="card bg-base-100 shadow-xl border-l-4 border-error">
+        <div class="card-body">
+            <h2 class="card-title text-xl text-error mb-4">Danger Zone</h2>
+            <p class="text-base-content/70 mb-6">
+                Archive this board to remove it from your organization. All cards and lists will be preserved but hidden.
+                Archived boards can be restored later.
+            </p>
+            
+            <form method="POST" action="/orgs/<%= organization.slug %>/boards/<%= board.id %>/archive" onsubmit="return confirm('Are you sure you want to archive this board? All cards and lists will be hidden.')">
+                <button type="submit" class="btn btn-error">
+                    Archive Board
+                </button>
+            </form>
+        </div>
     </div>
 </div>

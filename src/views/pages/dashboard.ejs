@@ -1,88 +1,98 @@
-<div style="margin-bottom: 2rem;">
+<div class="mb-8">
     <% if (locals.flash?.success) { %>
-        <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+        <div class="alert alert-success mb-4">
             <%= locals.flash.success %>
         </div>
     <% } %>
     
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; color: #1f2937;">Welcome back, <%= user.name %>!</h1>
-            <p style="color: #6b7280;">Manage your projects and collaborate with your team</p>
+            <h1 class="text-3xl font-bold text-base-content mb-2">Welcome back, <%= user.name %>!</h1>
+            <p class="text-base-content/70">Manage your projects and collaborate with your team</p>
         </div>
         
         <div>
-            <form method="POST" action="/auth/logout" style="display: inline;">
-                <button type="submit" class="btn" style="background: #6b7280;">Sign Out</button>
+            <form method="POST" action="/auth/logout" class="inline">
+                <button type="submit" class="btn btn-outline">Sign Out</button>
             </form>
         </div>
     </div>
 </div>
 
-<div style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 3rem;">
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1f2937;">📊 Your Organizations</h3>
-        <% if (organizations && organizations.length > 0) { %>
-            <% organizations.forEach(org => { %>
-                <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.375rem; border-left: 4px solid #3b82f6;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h4 style="font-weight: 500; color: #1f2937;"><%= org.name %></h4>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Role: <%= org.userRole %></p>
+<div class="grid gap-8 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mb-12">
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h3 class="card-title text-lg">📊 Your Organizations</h3>
+            <% if (organizations && organizations.length > 0) { %>
+                <div class="space-y-2">
+                    <% organizations.forEach(org => { %>
+                        <div class="p-3 bg-base-200 rounded-lg border-l-4 border-primary">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-medium text-base-content"><%= org.name %></h4>
+                                    <p class="text-sm text-base-content/70">Role: <%= org.userRole %></p>
+                                </div>
+                                <a href="/orgs/<%= org.slug %>" class="btn btn-sm btn-primary">View</a>
+                            </div>
                         </div>
-                        <a href="/orgs/<%= org.slug %>" class="btn" style="font-size: 0.875rem; padding: 0.5rem 0.75rem;">View</a>
-                    </div>
+                    <% }) %>
                 </div>
-            <% }) %>
-        <% } else { %>
-            <p style="color: #6b7280; font-style: italic;">No organizations yet</p>
-        <% } %>
-        <div style="margin-top: 1rem;">
-            <a href="/orgs/new" class="btn" style="background: #059669; font-size: 0.875rem;">+ Create Organization</a>
+            <% } else { %>
+                <p class="text-base-content/70 italic">No organizations yet</p>
+            <% } %>
+            <div class="card-actions justify-start mt-4">
+                <a href="/orgs/new" class="btn btn-success btn-sm">+ Create Organization</a>
+            </div>
         </div>
     </div>
     
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1f2937;">🎯 Recent Boards</h3>
-        <p style="color: #6b7280; font-style: italic;">No recent boards</p>
-        <div style="margin-top: 1rem;">
-            <button class="btn" style="background: #6b7280; font-size: 0.875rem;" disabled>Create Board</button>
-            <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem;">Create an organization first</p>
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h3 class="card-title text-lg">🎯 Recent Boards</h3>
+            <p class="text-base-content/70 italic">No recent boards</p>
+            <div class="card-actions justify-start mt-4">
+                <button class="btn btn-neutral btn-sm" disabled>Create Board</button>
+                <p class="text-xs text-base-content/50 mt-2">Create an organization first</p>
+            </div>
         </div>
     </div>
     
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1f2937;">🤖 AI Features</h3>
-        <ul style="color: #6b7280; font-size: 0.875rem; line-height: 1.6;">
-            <li>Smart card creation</li>
-            <li>Intelligent categorization</li>
-            <li>Progress insights</li>
-            <li>Semantic search</li>
-        </ul>
-        <div style="margin-top: 1rem;">
-            <button class="btn" style="background: #7c3aed; font-size: 0.875rem;" disabled>Coming Soon</button>
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h3 class="card-title text-lg">🤖 AI Features</h3>
+            <ul class="text-base-content/70 text-sm space-y-1">
+                <li>Smart card creation</li>
+                <li>Intelligent categorization</li>
+                <li>Progress insights</li>
+                <li>Semantic search</li>
+            </ul>
+            <div class="card-actions justify-start mt-4">
+                <button class="btn btn-secondary btn-sm" disabled>Coming Soon</button>
+            </div>
         </div>
     </div>
 </div>
 
-<div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1f2937;">🚀 Quick Start</h3>
-    <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-        <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-            <h4 style="font-weight: 500; margin-bottom: 0.5rem; color: #1f2937;">1. Create Organization</h4>
-            <p style="font-size: 0.875rem; color: #6b7280;">Set up your team workspace</p>
-        </div>
-        <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-            <h4 style="font-weight: 500; margin-bottom: 0.5rem; color: #1f2937;">2. Create Board</h4>
-            <p style="font-size: 0.875rem; color: #6b7280;">Start your first project</p>
-        </div>
-        <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-            <h4 style="font-weight: 500; margin-bottom: 0.5rem; color: #1f2937;">3. Add Cards</h4>
-            <p style="font-size: 0.875rem; color: #6b7280;">Create tasks and get organized</p>
-        </div>
-        <div style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
-            <h4 style="font-weight: 500; margin-bottom: 0.5rem; color: #1f2937;">4. Use AI Features</h4>
-            <p style="font-size: 0.875rem; color: #6b7280;">Let AI help boost productivity</p>
+<div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <h3 class="card-title text-lg">🚀 Quick Start</h3>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="p-4 border border-base-300 rounded-lg">
+                <h4 class="font-medium mb-2 text-base-content">1. Create Organization</h4>
+                <p class="text-sm text-base-content/70">Set up your team workspace</p>
+            </div>
+            <div class="p-4 border border-base-300 rounded-lg">
+                <h4 class="font-medium mb-2 text-base-content">2. Create Board</h4>
+                <p class="text-sm text-base-content/70">Start your first project</p>
+            </div>
+            <div class="p-4 border border-base-300 rounded-lg">
+                <h4 class="font-medium mb-2 text-base-content">3. Add Cards</h4>
+                <p class="text-sm text-base-content/70">Create tasks and get organized</p>
+            </div>
+            <div class="p-4 border border-base-300 rounded-lg">
+                <h4 class="font-medium mb-2 text-base-content">4. Use AI Features</h4>
+                <p class="text-sm text-base-content/70">Let AI help boost productivity</p>
+            </div>
         </div>
     </div>
 </div>

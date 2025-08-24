@@ -1,0 +1,35 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/views/**/*.ejs",
+    "./src/public/**/*.js"
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require("daisyui")
+  ],
+  daisyui: {
+    themes: [
+      {
+        kanban: {
+          "primary": "#3b82f6",        // Blue (like Trello primary)
+          "secondary": "#8b5cf6",      // Purple  
+          "accent": "#06b6d4",         // Cyan
+          "neutral": "#374151",        // Dark gray
+          "base-100": "#ffffff",       // White background
+          "base-200": "#f3f4f6",       // Light gray
+          "base-300": "#e5e7eb",       // Medium gray
+          "info": "#0ea5e9",           // Light blue
+          "success": "#10b981",        // Green
+          "warning": "#f59e0b",        // Orange  
+          "error": "#ef4444",          // Red
+        }
+      },
+      "light",    // Fallback themes
+      "cupcake",  // Colorful theme
+      "emerald",  // Green theme
+    ],
+  },
+}

@@ -1,18 +1,18 @@
-<div style="max-width: 600px; margin: 2rem auto;">
-    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-        <a href="/dashboard" style="color: #6b7280; text-decoration: none; margin-right: 1rem;">← Dashboard</a>
-        <h1 style="margin: 0; color: #1f2937;">Create Organization</h1>
+<div class="w-full max-w-2xl mx-auto mt-8">
+    <div class="flex items-center mb-8">
+        <a href="/dashboard" class="link text-base-content/70 mr-4">← Dashboard</a>
+        <h1 class="text-3xl font-bold text-base-content">Create Organization</h1>
     </div>
     
     <% if (locals.flash?.error) { %>
-        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+        <div class="alert alert-error mb-4">
             <%= locals.flash.error %>
         </div>
     <% } %>
     
     <% if (errors && errors.length > 0) { %>
-        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #dc2626; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem;">
-            <ul style="margin: 0; padding-left: 1rem;">
+        <div class="alert alert-error mb-4">
+            <ul class="list-disc ml-4">
                 <% errors.forEach(error => { %>
                     <li><%= error.message %></li>
                 <% }) %>
@@ -20,52 +20,58 @@
         </div>
     <% } %>
     
-    <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <form method="POST" action="/orgs">
-            <div style="margin-bottom: 1.5rem;">
-                <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Organization Name</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
-                    value="<%= oldInput.name || '' %>"
-                    required
-                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;"
-                    placeholder="Enter organization name"
-                    oninput="generateSlug()"
-                >
-                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
-                    The name of your team or organization
-                </p>
-            </div>
-            
-            <div style="margin-bottom: 2rem;">
-                <label for="slug" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">URL Slug</label>
-                <div style="display: flex; align-items: center; border: 1px solid #d1d5db; border-radius: 0.375rem; overflow: hidden;">
-                    <span style="background: #f9fafb; padding: 0.75rem; color: #6b7280; border-right: 1px solid #d1d5db;">
-                        localhost:3000/orgs/
-                    </span>
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <form method="POST" action="/orgs">
+                <div class="form-control mb-6">
+                    <label for="name" class="label">
+                        <span class="label-text">Organization Name</span>
+                    </label>
                     <input 
                         type="text" 
-                        id="slug" 
-                        name="slug" 
-                        value="<%= oldInput.slug || '' %>"
+                        id="name" 
+                        name="name" 
+                        value="<%= oldInput.name || '' %>"
                         required
-                        pattern="^[a-z0-9-]+$"
-                        style="flex: 1; padding: 0.75rem; border: none; outline: none; font-size: 1rem;"
-                        placeholder="my-organization"
+                        class="input input-bordered w-full"
+                        placeholder="Enter organization name"
+                        oninput="generateSlug()"
                     >
+                    <label class="label">
+                        <span class="label-text-alt">The name of your team or organization</span>
+                    </label>
                 </div>
-                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
-                    Only lowercase letters, numbers, and hyphens allowed
-                </p>
-            </div>
             
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <a href="/dashboard" class="btn" style="background: #6b7280;">Cancel</a>
-                <button type="submit" class="btn" style="background: #059669;">Create Organization</button>
-            </div>
-        </form>
+                <div class="form-control mb-8">
+                    <label for="slug" class="label">
+                        <span class="label-text">URL Slug</span>
+                    </label>
+                    <div class="join">
+                        <span class="join-item bg-base-200 px-3 py-2 text-base-content/70">
+                            localhost:3000/orgs/
+                        </span>
+                        <input 
+                            type="text" 
+                            id="slug" 
+                            name="slug" 
+                            value="<%= oldInput.slug || '' %>"
+                            required
+                            pattern="^[a-z0-9-]+$"
+                            class="input input-bordered join-item flex-1"
+                            placeholder="my-organization"
+                        >
+                    </div>
+                    <label class="label">
+                        <span class="label-text-alt">Only lowercase letters, numbers, and hyphens allowed</span>
+                    </label>
+                </div>
+            
+                <div class="card-actions justify-end">
+                    <a href="/dashboard" class="btn btn-neutral">Cancel</a>
+                    <button type="submit" class="btn btn-success">Create Organization</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

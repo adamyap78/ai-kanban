@@ -19,7 +19,12 @@ Build a server-first MVP SaaS with no SPA. Default to pure HTML; add htmx only w
 - **Validation:** Zod schemas for all inputs
 
 ### Frontend
-- **Styling:** TailwindCSS + @tailwindcss/forms
+- **Styling:** TailwindCSS v4 + DaisyUI v5 (semantic component classes)
+  - Rationale: AI-friendly utilities + clean semantic classes like `btn`, `card`, `modal`
+  - Implementation: Start with vanilla Tailwind4 + Daisy5, get basic setup working first
+  - Build process: Single CSS compilation step (`npm run css:build`)
+  - Colorful themes: Built-in vibrant themes perfect for Trello-style design
+  - **Important:** Establish working vanilla setup before adding custom CSS layers
 - **Progressive Enhancement:** htmx (selective use only)
 - **Default Approach:** Server-rendered HTML with POST-Redirect-GET
 - **Client JS:** Pure JavaScript with FormData for progressive enhancement
