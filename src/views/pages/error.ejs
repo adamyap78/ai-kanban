@@ -1,0 +1,14 @@
+<div style="text-align: center; padding: 4rem 0;">
+    <h1 style="font-size: 4rem; margin-bottom: 1rem;">😵</h1>
+    <h2 style="font-size: 2rem; margin-bottom: 1rem; color: #dc2626;">Something Went Wrong</h2>
+    <p style="color: #6b7280; margin-bottom: 2rem;">We're experiencing some technical difficulties. Please try again later.</p>
+    
+    <% if (locals.env === 'development' && error) { %>
+        <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin: 2rem auto; max-width: 600px; text-align: left;">
+            <h3 style="color: #dc2626; margin-bottom: 0.5rem;">Development Error Details:</h3>
+            <pre style="color: #991b1b; font-size: 0.875rem; overflow-x: auto;"><%= error.stack || error.message || error %></pre>
+        </div>
+    <% } %>
+    
+    <a href="/" class="btn">Go Home</a>
+</div>
