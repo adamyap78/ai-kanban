@@ -43,7 +43,10 @@
                             </svg>
                         </div>
                         <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            <li><a onclick="showAddCardModal('<%= list.id %>')">Add Card</a></li>
+                            <li><a hx-get="/cards/new?listId=<%= list.id %>" 
+                                   hx-target="#cardDetailContent" 
+                                   hx-trigger="click"
+                                   onclick="document.getElementById('cardDetailModal').showModal()">Add Card</a></li>
                             <li><hr class="my-1"></li>
                             <li><a onclick="editList('<%= list.id %>', '<%= list.name %>')">Edit List</a></li>
                             <li><a onclick="deleteList('<%= list.id %>')" class="text-error">Delete List</a></li>
@@ -69,7 +72,11 @@
                 <% } %>
                 
                 <!-- Add Card Button at Bottom -->
-                <button onclick="showAddCardModal('<%= list.id %>')" 
+                <button id="add-card-button-<%= list.id %>"
+                        hx-get="/cards/new?listId=<%= list.id %>" 
+                        hx-target="#cardDetailContent" 
+                        hx-trigger="click"
+                        onclick="document.getElementById('cardDetailModal').showModal()"
                         class="w-full p-3 text-left text-base-content/70 hover:text-base-content hover:bg-base-300 rounded-lg transition-colors group cursor-pointer">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,44 +125,6 @@
     </form>
 </dialog>
 
-<!-- Add Card Modal -->
-<dialog id="addCardModal" class="modal">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">Add New Card</h3>
-        <form method="POST" action="/cards">
-            <input type="hidden" name="listId" id="addCardListId" value="">
-            
-            <div class="form-control mb-4">
-                <label class="label">
-                    <span class="label-text">Card Title</span>
-                </label>
-                <input type="text" name="title" class="input input-bordered" placeholder="Enter card title..." required maxlength="200">
-            </div>
-            
-            <div class="form-control mb-4">
-                <label class="label">
-                    <span class="label-text">Description (Optional)</span>
-                </label>
-                <textarea name="description" class="textarea textarea-bordered" rows="3" placeholder="Enter card description..." maxlength="2000"></textarea>
-            </div>
-            
-            <div class="form-control mb-4">
-                <label class="label">
-                    <span class="label-text">Due Date (Optional)</span>
-                </label>
-                <input type="date" name="dueDate" class="input input-bordered">
-            </div>
-            
-            <div class="modal-action">
-                <button type="button" class="btn btn-ghost" onclick="closeAddCardModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Card</button>
-            </div>
-        </form>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-    </form>
-</dialog>
 
 <!-- Card Detail Modal -->
 <dialog id="cardDetailModal" class="modal">
@@ -179,15 +148,6 @@ function closeAddListModal() {
     document.getElementById('addListModal').close();
 }
 
-// Add Card Modal Functions
-function showAddCardModal(listId) {
-    document.getElementById('addCardListId').value = listId;
-    document.getElementById('addCardModal').showModal();
-}
-
-function closeAddCardModal() {
-    document.getElementById('addCardModal').close();
-}
 
 // Card Detail Functions - now handled by htmx
 

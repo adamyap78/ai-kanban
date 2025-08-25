@@ -1,0 +1,4 @@
+<!-- OOB swap to add new card to the board view -->
+<div hx-swap-oob="beforebegin:#add-card-button-<%= card.listId %>">
+  <%- include('card-item', { card }) %>
+</div>

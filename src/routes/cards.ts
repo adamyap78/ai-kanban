@@ -51,6 +51,12 @@ router.post('/cards', requireAuth, async (req, res) => {
 
     if (req.headers['content-type']?.includes('application/json')) {
       res.json({ success: true, card });
+    } else if (req.headers['hx-request']) {
+      // Return add-specific OOB swap for new cards
+      return res.render('partials/card-add-oob', { 
+        card, 
+        layout: false
+      });
     } else {
       req.flash('success', 'Card created successfully!');
       // Redirect back to the board page
@@ -74,7 +80,7 @@ router.post('/cards', requireAuth, async (req, res) => {
   }
 });
 
-// Get card details
+// Get card details or new card form
 router.get('/cards/:cardId', requireAuth, async (req, res) => {
   try {
     const cardId = req.params.cardId;
@@ -82,6 +88,29 @@ router.get('/cards/:cardId', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Card ID is required' });
     }
     
+    // Handle special "new" cardId for add card mode
+    if (cardId === 'new') {
+      const listId = req.query.listId as string;
+      if (!listId) {
+        return res.status(400).json({ error: 'List ID is required for new cards' });
+      }
+      
+      // Create empty card object for add mode
+      const emptyCard = {
+        id: null,
+        title: '',
+        description: '',
+        dueDate: null
+      };
+      
+      return res.render('partials/card-form-modal', { 
+        card: emptyCard,
+        listId,
+        layout: false
+      });
+    }
+    
+    // Handle existing card edit mode
     const card = await cardService.getById(cardId, req.user!.id);
     
     if (!card) {
@@ -91,8 +120,8 @@ router.get('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ card });
     } else {
-      // For HTML request, render card edit modal directly
-      return res.render('partials/card-edit-modal', { 
+      // For HTML request, render unified card form modal
+      return res.render('partials/card-form-modal', { 
         card, 
         layout: false  // Don't use the main layout for partials
       });
