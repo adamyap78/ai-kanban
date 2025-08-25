@@ -34,7 +34,7 @@
     <% lists.forEach(list => { %>
         <div class="flex-shrink-0 w-80">
             <!-- List Header -->
-            <div class="bg-base-200 rounded-t-lg p-4 border-b border-base-300">
+            <div class="bg-base-200 rounded-t-lg p-4">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-semibold text-lg text-base-content"><%= list.name %></h3>
                     <div class="dropdown dropdown-end">
@@ -54,7 +54,7 @@
             </div>
             
             <!-- Cards Container -->
-            <div class="bg-base-200 rounded-b-lg p-4 min-h-[400px] space-y-3" data-list-id="<%= list.id %>">
+            <div class="bg-base-200 rounded-b-lg p-4 min-h-[400px] space-y-3 shadow-md" data-list-id="<%= list.id %>">
                 <% if (cardsByList[list.id] && cardsByList[list.id].length > 0) { %>
                     <% cardsByList[list.id].forEach(card => { %>
                         <%- include('../../partials/card-item', { card }) %>
