@@ -91,8 +91,8 @@ router.get('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ card });
     } else {
-      // For HTML request, render card detail partial without layout
-      return res.render('partials/card-detail', { 
+      // For HTML request, render card edit modal directly
+      return res.render('partials/card-edit-modal', { 
         card, 
         layout: false  // Don't use the main layout for partials
       });
@@ -124,8 +124,8 @@ router.put('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.json({ success: true, card });
     } else if (req.headers['hx-request']) {
-      // Return updated card partial for htmx
-      return res.render('partials/card-detail', { 
+      // Return just the OOB swap for board card (modal will close automatically)
+      return res.render('partials/card-update-oob', { 
         card, 
         layout: false
       });

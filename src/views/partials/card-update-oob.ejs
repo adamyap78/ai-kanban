@@ -1,0 +1,4 @@
+<!-- OOB swap to update the card in the board view -->
+<div hx-swap-oob="outerHTML:#card-<%= card.id %>">
+  <%- include('card-item', { card }) %>
+</div>
