@@ -365,6 +365,32 @@ function handleDrop(event) {
     });
 }
 
+// Card Management Functions
+function deleteCardAndRefresh(cardId) {
+    if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
+        fetch(`/cards/${cardId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Card deleted successfully, refreshing page...');
+                location.reload();
+            } else {
+                console.error('Failed to delete card:', data.error);
+                alert('Failed to delete card: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting card:', error);
+            alert('Failed to delete card');
+        });
+    }
+}
+
 // List Management Functions
 function editList(listId, currentName) {
     const newName = prompt('Enter new list name:', currentName);
