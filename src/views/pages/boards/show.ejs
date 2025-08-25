@@ -1,8 +1,7 @@
 <div class="mb-6">
     <div class="flex justify-between items-center mb-4">
         <div class="flex items-center">
-            <a href="/orgs/<%= organization.slug %>" class="link text-base-content/70 mr-4">← <%= organization.name %></a>
-            <h1 class="text-3xl font-bold text-base-content"><%= board.name %></h1>
+            <h1 class="text-3xl font-bold text-primary"><%= board.name %></h1>
         </div>
         
         <div class="flex gap-2">
@@ -36,7 +35,7 @@
             <!-- List Header -->
             <div class="bg-base-200 rounded-t-lg p-4">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-semibold text-lg text-base-content"><%= list.name %></h3>
+                    <h3 class="font-semibold text-lg text-secondary"><%= list.name %></h3>
                     <div class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

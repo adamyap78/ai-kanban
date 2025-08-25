@@ -16,12 +16,15 @@
 <body>
     <header class="navbar bg-base-100 shadow-sm">
         <div class="navbar-start">
-            <a href="/" class="btn btn-ghost text-xl font-bold text-primary">🎯 AI Kanban</a>
+            <% if (locals.user) { %>
+                <a href="/dashboard" class="btn btn-ghost text-xl font-bold text-base-content">AI Kanban</a>
+            <% } else { %>
+                <a href="/" class="btn btn-ghost text-xl font-bold text-base-content">AI Kanban</a>
+            <% } %>
         </div>
         <div class="navbar-end">
             <% if (locals.user) { %>
                 <!-- Authenticated navigation -->
-                <a href="/dashboard" class="btn btn-ghost mr-2">Dashboard</a>
                 <span class="text-base-content mr-4">Hello, <%= locals.user.name %></span>
                 <form method="POST" action="/auth/logout" class="inline">
                     <button type="submit" class="btn btn-outline btn-sm">Sign Out</button>
