@@ -243,6 +243,11 @@ function handleDragEnd(event) {
         zone.classList.remove('drag-over');
     });
     
+    // Remove list-drag-over effects from board (in case card drag triggered it)
+    document.querySelectorAll('.list-drop-zone').forEach(zone => {
+        zone.classList.remove('list-drag-over');
+    });
+    
     console.log('Drag ended');
 }
 
@@ -256,6 +261,7 @@ function handleDragOver(event) {
 
 function handleDrop(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent bubbling to list drop handler
     
     const dropZone = event.currentTarget;
     const targetListId = dropZone.dataset.listId;
@@ -438,6 +444,12 @@ function handleListDragEnd(event) {
 
 function handleListDragOver(event) {
     event.preventDefault();
+    
+    // Only show list drag feedback if we're actually dragging a list
+    if (!draggedList || draggedCard) {
+        return; // Exit if dragging a card instead of a list
+    }
+    
     event.dataTransfer.dropEffect = 'move';
     
     // Add visual feedback to board
@@ -449,9 +461,9 @@ function handleListDrop(event) {
     
     const boardDropZone = event.currentTarget;
     
-    if (!draggedList) {
-        console.error('Invalid list drop operation');
-        return;
+    // Only handle if we're actually dragging a list, not a card
+    if (!draggedList || draggedCard) {
+        return; // Exit silently if this is a card drag or no list being dragged
     }
     
     const listId = draggedList.dataset.listId;
