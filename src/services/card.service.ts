@@ -242,17 +242,13 @@ export class CardService {
     const card = newCard[0];
     console.log('✅ Card created:', card.id);
 
-    return {
-      id: card.id,
-      title: card.title,
-      description: card.description,
-      position: card.position,
-      dueDate: card.dueDate,
-      listId: card.listId,
-      createdBy: card.createdBy,
-      createdAt: card.createdAt!,
-      updatedAt: card.updatedAt!,
-    };
+    // Fetch the full card with creator information using getById
+    const fullCard = await this.getById(card.id, data.userId);
+    if (!fullCard) {
+      throw new Error('Failed to retrieve created card');
+    }
+    
+    return fullCard;
   }
 
   async update(cardId: string, userId: string, data: {
