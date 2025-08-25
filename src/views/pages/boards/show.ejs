@@ -29,13 +29,26 @@
 </div>
 
 <!-- Kanban Board -->
-<div class="flex gap-6 overflow-x-auto pb-6 min-h-[600px]">
+<div class="flex gap-6 overflow-x-auto pb-6 min-h-[600px] list-drop-zone" 
+     ondragover="handleListDragOver(event)" 
+     ondrop="handleListDrop(event)">
     <% lists.forEach(list => { %>
-        <div class="flex-shrink-0 w-80">
+        <div class="flex-shrink-0 w-80 list-container" 
+             data-list-id="<%= list.id %>"
+             data-list-position="<%= list.position %>">
             <!-- List Header -->
-            <div class="bg-base-200 rounded-t-lg p-4">
+            <div class="bg-base-200 rounded-t-lg p-4 list-drag-handle" 
+                 draggable="true"
+                 ondragstart="handleListDragStart(event)"
+                 ondragend="handleListDragEnd(event)"
+                 ondragover="event.preventDefault()">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-semibold text-lg text-secondary"><%= list.name %></h3>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-base-content/50 cursor-grab" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                        </svg>
+                        <h3 class="font-semibold text-lg text-secondary"><%= list.name %></h3>
+                    </div>
                     <div class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,8 +98,8 @@
     <% }); %>
     
     <!-- Add List Button -->
-    <div class="flex-shrink-0 w-80">
-        <button onclick="showAddListModal()" class="w-full h-32 border-2 border-dashed border-base-300 rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-primary/5 transition-colors">
+    <div class="flex-shrink-0 w-80" draggable="false">
+        <button onclick="showAddListModal()" draggable="false" class="w-full h-32 border-2 border-dashed border-base-300 rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-primary/5 transition-colors">
             <svg class="w-8 h-8 mb-2 text-base-content/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -362,6 +375,187 @@ function handleDrop(event) {
         dropZone.classList.remove('drag-over');
         draggedCard = null;
         draggedFromList = null;
+    });
+}
+
+// List Drag and Drop Variables
+let draggedList = null;
+let draggedFromBoard = null;
+
+// Sort lists by their position values
+function sortListsByPosition(boardElement) {
+    const lists = Array.from(boardElement.querySelectorAll('.list-container'));
+    
+    // Sort lists by position
+    lists.sort((a, b) => {
+        const posA = parseFloat(a.dataset.listPosition || '0');
+        const posB = parseFloat(b.dataset.listPosition || '0');
+        return posA - posB;
+    });
+    
+    // Remove all lists from DOM
+    lists.forEach(list => list.remove());
+    
+    // Re-insert lists in correct order
+    lists.forEach(list => {
+        boardElement.appendChild(list);
+    });
+    
+    console.log('Sorted', lists.length, 'lists in board');
+}
+
+// List Drag and Drop Functions
+function handleListDragStart(event) {
+    // The drag started from the drag handle, so we need to find the list container
+    draggedList = event.target.closest('.list-container');
+    draggedFromBoard = draggedList.parentElement;
+    
+    // Add visual feedback to the list container
+    draggedList.style.opacity = '0.5';
+    draggedList.classList.add('list-dragging');
+    
+    // Store data for the drag operation
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', event.target.outerHTML);
+    
+    console.log('List drag started for:', draggedList.dataset.listId);
+}
+
+function handleListDragEnd(event) {
+    // Clean up visual feedback from the list container
+    if (draggedList) {
+        draggedList.style.opacity = '';
+        draggedList.classList.remove('list-dragging');
+    }
+    
+    // Remove drag-over effects from board
+    document.querySelectorAll('.list-drop-zone').forEach(zone => {
+        zone.classList.remove('list-drag-over');
+    });
+    
+    console.log('List drag ended');
+}
+
+function handleListDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    
+    // Add visual feedback to board
+    event.currentTarget.classList.add('list-drag-over');
+}
+
+function handleListDrop(event) {
+    event.preventDefault();
+    
+    const boardDropZone = event.currentTarget;
+    
+    if (!draggedList) {
+        console.error('Invalid list drop operation');
+        return;
+    }
+    
+    const listId = draggedList.dataset.listId;
+    const originalPosition = parseFloat(draggedList.dataset.listPosition || '1');
+    
+    // Calculate new position based on horizontal drop position
+    const listsInBoard = Array.from(boardDropZone.querySelectorAll('.list-container'));
+    const dropX = event.clientX;
+    let newPosition = 1;
+    
+    // Filter out the dragged list itself for position calculation
+    const otherLists = listsInBoard.filter(list => list !== draggedList);
+    
+    if (otherLists.length > 0) {
+        // Find insertion point based on mouse position
+        let insertAfter = null;
+        
+        for (let i = 0; i < otherLists.length; i++) {
+            const list = otherLists[i];
+            
+            const rect = list.getBoundingClientRect();
+            const listCenterX = rect.left + rect.width / 2;
+            
+            if (dropX < listCenterX) {
+                break; // Insert before this list
+            }
+            insertAfter = list;
+        }
+        
+        if (insertAfter) {
+            // Get position of list we're inserting after
+            const afterPosition = parseFloat(insertAfter.dataset.listPosition || '1');
+            
+            // Find the next list in our filtered array
+            const afterIndex = otherLists.indexOf(insertAfter);
+            const nextList = otherLists[afterIndex + 1];
+            
+            if (nextList) {
+                // Insert between two lists
+                const nextPosition = parseFloat(nextList.dataset.listPosition || (afterPosition + 2));
+                newPosition = (afterPosition + nextPosition) / 2;
+            } else {
+                // Insert at end
+                newPosition = afterPosition + 1;
+            }
+        } else {
+            // Insert at beginning
+            if (otherLists.length > 0) {
+                const firstList = otherLists[0];
+                const firstPosition = parseFloat(firstList.dataset.listPosition || '2');
+                newPosition = firstPosition / 2;
+            }
+        }
+    }
+    
+    // Don't do anything if dropped in the exact same position
+    if (Math.abs(originalPosition - newPosition) < 0.001) {
+        console.log('List dropped in same position, no move needed');
+        boardDropZone.classList.remove('list-drag-over');
+        return;
+    }
+    
+    console.log('Moving list', listId, 'to position', newPosition);
+    console.log('Other lists in board:', otherLists.length);
+    console.log('Drop X:', dropX);
+    console.log('Original position:', originalPosition, 'New position:', newPosition);
+    
+    // Update the list's position data immediately
+    draggedList.dataset.listPosition = newPosition;
+    
+    // Sort lists to ensure proper positioning
+    sortListsByPosition(boardDropZone);
+    
+    // Make API call to update backend
+    fetch(`/lists/${listId}/position`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            position: newPosition
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('List moved successfully, refreshing page...');
+            location.reload();
+        } else {
+            console.error('Failed to move list:', data.error);
+            alert('Failed to move list: ' + (data.error || 'Unknown error'));
+            location.reload(); // Refresh to reset the UI
+        }
+    })
+    .catch(error => {
+        console.error('Error moving list:', error);
+        alert('Failed to move list');
+        location.reload(); // Refresh to reset the UI
+    })
+    .finally(() => {
+        // Clean up
+        boardDropZone.classList.remove('list-drag-over');
+        draggedList = null;
+        draggedFromBoard = null;
     });
 }
 

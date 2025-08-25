@@ -17,3 +17,20 @@
 .card.dragging {
   @apply cursor-grabbing;
 }
+
+/* List Drag and Drop Styles */
+.list-drop-zone.list-drag-over {
+  @apply bg-secondary/5 border-2 border-dashed border-secondary;
+}
+
+.list-drag-handle {
+  @apply cursor-grab;
+}
+
+.list-drag-handle:hover {
+  @apply bg-base-300/50;
+}
+
+.list-container.list-dragging {
+  @apply cursor-grabbing shadow-2xl transform rotate-1 scale-105;
+}
