@@ -1,2 +1,19 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Drag and Drop Styles */
+.drop-zone.drag-over {
+  @apply bg-primary/10 border-2 border-dashed border-primary;
+}
+
+.card.dragging {
+  @apply shadow-2xl transform rotate-2;
+}
+
+.card:hover.draggable {
+  @apply cursor-grab;
+}
+
+.card.dragging {
+  @apply cursor-grabbing;
+}

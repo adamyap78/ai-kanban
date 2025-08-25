@@ -1,6 +1,7 @@
 <div id="card-<%= card.id %>" 
-     class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow cursor-pointer" 
+     class="card bg-base-100 shadow-sm hover:shadow-lg transition-shadow cursor-pointer draggable" 
      data-card-id="<%= card.id %>"
+     data-card-position="<%= card.position %>"
      hx-get="/cards/<%= card.id %>"
      hx-target="#cardDetailContent"
      hx-trigger="click"
