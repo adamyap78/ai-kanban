@@ -140,8 +140,56 @@ ai_suggestions (id, card_id, suggestion_type, content, applied, created_at)
 - Static assets served via CDN
 - Horizontal scaling via Vercel serverless functions
 
+## Design Philosophy & Implementation Patterns
+
+### UI/UX Design Principles
+- **One-Click Direct Actions:** Users should be able to edit cards with a single click, no separate "view" and "edit" modes
+- **Immediate Feedback:** Modal closes and UI updates happen instantly, not after waiting for server responses
+- **Progressive Disclosure:** Show essential information upfront, details on demand
+- **Minimal Cognitive Load:** Reduce the number of steps and decisions required for common actions
+
+### HTMX Implementation Standards
+- **Simplicity First:** Prefer simple HTMX patterns over complex JavaScript state management
+- **Direct Element Targeting:** Use explicit IDs and direct targeting rather than complex DOM traversal
+- **Immediate UI Response:** Trigger UI changes immediately on user actions, let server updates happen in background
+- **Out-of-Band (OOB) Swaps:** Use `hx-swap-oob` for updating multiple parts of the page from single server response
+- **Form-to-Modal Pattern:** 
+  ```html
+  <!-- Click card opens edit modal directly -->
+  <div hx-get="/cards/123" hx-target="#modalContent" onclick="showModal()">
+  
+  <!-- Save triggers request + immediate modal close -->
+  <button hx-put="/cards/123" hx-include="closest form" 
+          onclick="document.getElementById('modal').close()">
+  ```
+
+### Code Architecture Patterns
+- **Server-Side Templates:** Use EJS partials for reusable components (card-item.ejs, card-edit-modal.ejs)
+- **Response Templates:** Separate templates for different response types:
+  - `card-edit-modal.ejs` - Initial modal content
+  - `card-update-oob.ejs` - OOB swap responses for board updates
+  - `card-item.ejs` - Reusable card display component
+- **Route Simplicity:** Routes should have single responsibilities:
+  - GET `/cards/:id` → Returns edit modal template
+  - PUT `/cards/:id` → Updates card + returns OOB swap template
+  - DELETE `/cards/:id` → Deletes card + returns empty OOB swap
+- **Error Handling:** Graceful degradation with meaningful error messages and fallback behaviors
+
+### Modal Interaction Patterns
+- **Edit-Only Modals:** Cards open directly in edit mode, no separate view/edit toggle
+- **Immediate Close:** Modal closes as soon as user takes action (save/delete/cancel)
+- **Background Sync:** Server operations complete in background while user continues working
+- **Context Preservation:** Show card metadata (created date, author) as read-only context in edit modal
+
+### Database & State Management
+- **Optimistic UI:** UI updates immediately, server sync happens asynchronously
+- **Single Source of Truth:** Database as the authoritative state, UI reflects database changes via OOB swaps
+- **Minimal Client State:** Avoid complex client-side state management, let server drive UI updates
+
 ## Success Metrics
 - User registration to first board creation: < 5 minutes
 - Daily active users engaging with AI features: > 30%
 - Average cards per board: 20-50 (indicates healthy usage)
 - User retention after 30 days: > 60%
+- Card edit completion time: < 10 seconds (thanks to direct-edit pattern)
+- Modal interaction abandonment rate: < 5% (immediate feedback reduces friction)

@@ -4,8 +4,10 @@
 Server-first Trello-style Kanban board application with multi-tenant support and AI-powered features.
 
 ## Important Documentation Locations
-- **Requirements**: `docs/project/REQUIREMENTS.md` - Complete feature specifications and database schema
-- **Tech Stack**: `docs/template/STACK.md` - Architecture decisions and constraints
+- **Requirements & Design Philosophy**: `docs/project/REQUIREMENTS.md` - Complete feature specifications, database schema, and implementation patterns
+  - See "Design Philosophy & Implementation Patterns" section for HTMX patterns and UI/UX principles
+  - Contains modal interaction patterns, code architecture standards, and direct-edit design principles
+- **Tech Stack**: `docs/template/STACK.md` - Architecture decisions and constraints  
 - **Package Info**: `package.json` - Dependencies and available scripts
 
 ## Key Commands
@@ -57,13 +59,22 @@ src/
 
 ## Current Status
 **Phase 2 COMPLETED**: Full Kanban board functionality with lists and cards
+**Phase 2.5 COMPLETED**: Modal system redesign with direct-edit pattern
 
 ### Recent Updates
 - ✅ Complete Kanban board interface with working lists and cards
-- ✅ Card CRUD operations with modals and forms
+- ✅ Card CRUD operations with direct-edit modals (no view/edit toggle)
+- ✅ Immediate UI feedback with background server sync
+- ✅ Simplified HTMX patterns with OOB swaps
 - ✅ List management with inline editing
 - ✅ Fixed CSP configuration to allow inline event handlers
 - 🚀 Server running on http://localhost:3000
+
+### Design Pattern Achievements
+- ✅ **One-Click Edit**: Cards open directly in edit mode
+- ✅ **Immediate Feedback**: Modal closes instantly on save/delete
+- ✅ **Background Sync**: Server updates happen asynchronously via OOB swaps
+- ✅ **Simple HTMX**: Direct element targeting, no complex JavaScript state
 
 ## Missing Features (From Requirements)
 - Card management with drag-and-drop

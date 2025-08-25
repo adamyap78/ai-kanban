@@ -154,16 +154,7 @@
 </dialog>
 
 <!-- Card Detail Modal -->
-<dialog id="cardDetailModal" class="modal"
-        hx-on::htmx:afterRequest="
-          if(event.detail.xhr.status === 200 && event.detail.pathInfo.requestPath.includes('/cards/') && (event.detail.verb === 'put' || event.detail.verb === 'delete')) {
-            console.log('Card operation successful, closing modal...');
-            setTimeout(() => {
-              this.close();
-              location.reload();
-            }, 100);
-          }
-        ">
+<dialog id="cardDetailModal" class="modal">
     <div class="modal-box max-w-2xl">
         <div id="cardDetailContent">
             <!-- Card details will be loaded here -->
