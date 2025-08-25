@@ -1,6 +1,6 @@
 import { eq, and, asc } from 'drizzle-orm';
 import { db } from '../utils/db';
-import { lists, boards, userOrganizations, organizations } from '../db/schema';
+import { lists, boards, userOrganizations, organizations, cards } from '../db/schema';
 
 export interface List {
   id: string;
@@ -188,7 +188,9 @@ export class ListService {
       throw new Error('List not found or access denied');
     }
 
-    // TODO: Handle cards in this list (move to another list or delete)
+    // Delete all cards in this list first (to avoid foreign key constraint)
+    await db.delete(cards).where(eq(cards.listId, listId));
+    console.log('🗑️ Deleted all cards in list');
     
     // Delete list
     await db.delete(lists).where(eq(lists.id, listId));
