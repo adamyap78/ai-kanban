@@ -44,19 +44,13 @@
                             </svg>
                         </div>
                         <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                            <li><a onclick="showAddCardModal('<%= list.id %>')">Add Card</a></li>
+                            <li><hr class="my-1"></li>
                             <li><a onclick="editList('<%= list.id %>', '<%= list.name %>')">Edit List</a></li>
                             <li><a onclick="deleteList('<%= list.id %>')" class="text-error">Delete List</a></li>
                         </ul>
                     </div>
                 </div>
-                
-                <!-- Add Card Button -->
-                <button onclick="showAddCardModal('<%= list.id %>')" class="btn btn-primary btn-sm btn-block">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Add Card
-                </button>
             </div>
             
             <!-- Cards Container -->
@@ -74,6 +68,17 @@
                         <p class="text-sm">Add a card to get started</p>
                     </div>
                 <% } %>
+                
+                <!-- Add Card Button at Bottom -->
+                <button onclick="showAddCardModal('<%= list.id %>')" 
+                        class="w-full p-3 text-left text-base-content/70 hover:text-base-content hover:bg-base-300 rounded-lg transition-colors group cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span class="text-sm">Add a card</span>
+                    </div>
+                </button>
             </div>
         </div>
     <% }); %>
