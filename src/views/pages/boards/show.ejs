@@ -264,13 +264,7 @@ function handleDrop(event) {
     const sourceListId = draggedFromList.dataset.listId;
     const originalPosition = parseFloat(draggedCard.dataset.cardPosition || '1');
     
-    // Don't do anything if dropped in same position
-    if (sourceListId === targetListId && dropZone.contains(draggedCard)) {
-        dropZone.classList.remove('drag-over');
-        return;
-    }
-    
-    // Calculate new position
+    // Calculate new position first
     const cardsInTargetList = Array.from(dropZone.querySelectorAll('[data-card-id]'));
     const dropY = event.clientY;
     let newPosition = 1;
@@ -313,6 +307,13 @@ function handleDrop(event) {
                 newPosition = firstPosition / 2;
             }
         }
+    }
+    
+    // Don't do anything if dropped in the exact same position
+    if (sourceListId === targetListId && Math.abs(originalPosition - newPosition) < 0.001) {
+        console.log('Card dropped in same position, no move needed');
+        dropZone.classList.remove('drag-over');
+        return;
     }
     
     console.log('Moving card', cardId, 'to list', targetListId, 'at position', newPosition);
