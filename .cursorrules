@@ -1,0 +1,69 @@
+# AI Kanban Board - Cursor Rules
+
+## Documentation References
+This project maintains three key documentation files that MUST be kept up-to-date:
+
+1. **`CLAUDE.md`** - Project overview, current status, and development context
+2. **`docs/project/REQUIREMENTS.md`** - Complete feature specifications and requirements
+3. **`docs/template/STACK.md`** - Technology stack decisions and architecture constraints
+
+## Documentation Maintenance Rules
+
+### When New Requirements Are Given
+1. **Update `REQUIREMENTS.md`**:
+   - Add new features to appropriate sections
+   - Update database schema if new entities are needed
+   - Add user flows for new functionality
+   - Update missing features list in `CLAUDE.md`
+
+2. **Update `CLAUDE.md`**:
+   - Add new requirements to "Missing Features" section
+   - Update "Current Status" if implementing immediately
+   - Add to "Recent Updates" when completed
+
+### When Stack Decisions Are Made
+1. **Update `STACK.md`**:
+   - Document new technology choices with rationale
+   - Update architecture constraints if needed
+   - Add new patterns or guidelines
+   - Update "What We DON'T Use" section if changing approach
+
+2. **Update `CLAUDE.md`**:
+   - Update "Tech Stack" section
+   - Add new dependencies to package.json notes
+   - Update "Key Commands" if new scripts are added
+
+### Code Implementation Standards
+- Follow the patterns established in `STACK.md`
+- Use the database schema defined in `REQUIREMENTS.md`
+- Implement UI/UX patterns documented in `REQUIREMENTS.md`
+- Maintain the server-first philosophy with selective htmx use
+
+### File Organization
+- Follow the structure defined in `STACK.md`
+- Place new routes in appropriate `src/routes/` subdirectories
+- Use the service layer pattern for business logic
+- Follow the EJS template structure in `src/views/`
+
+### Database Changes
+- Update `src/db/schema.ts` when adding new entities
+- Run `npm run db:generate` to create migrations
+- Update database notes in `CLAUDE.md` if changing approach
+
+### Testing & Validation
+- Use Zod schemas for all input validation
+- Follow the validation patterns in `STACK.md`
+- Test both full-page and htmx flows
+
+## Development Workflow
+1. Check `REQUIREMENTS.md` for feature specifications
+2. Follow patterns in `STACK.md` for implementation
+3. Update `CLAUDE.md` with progress and status
+4. Keep all three documents synchronized
+
+## Important Reminders
+- This is a **server-first** application - default to server-rendered HTML
+- Use htmx **selectively** only where full-page reloads feel clunky
+- Maintain the multi-tenant structure: Organization → Boards → Lists → Cards
+- Follow the established authentication and authorization patterns
+- Keep the codebase simple and hostable on Vercel serverless

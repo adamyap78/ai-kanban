@@ -186,6 +186,102 @@ ai_suggestions (id, card_id, suggestion_type, content, applied, created_at)
 - **Single Source of Truth:** Database as the authoritative state, UI reflects database changes via OOB swaps
 - **Minimal Client State:** Avoid complex client-side state management, let server drive UI updates
 
+## AI Chatbot Feature
+
+### Architecture Overview
+**Client-Side with Server Proxy Pattern**
+- All chat history stored in browser memory (JavaScript arrays)
+- Chat state resets on page refresh (intentional for v1 simplicity)
+- Server proxy endpoint protects OpenAI API key while maintaining security
+- Zero database schema changes required for initial implementation
+
+### Technical Implementation
+
+#### 1. Server-Side Proxy Endpoint
+- **Route**: `POST /api/chat`
+- **Input**: `{messages: [{role: 'user'|'assistant', content: string}]}`
+- **Processing**: Forwards request to OpenAI API with server-stored API key
+- **Output**: Returns OpenAI response directly to client
+- **Model**: `gpt-4o-mini` (cost-effective, fast response times)
+
+#### 2. Client-Side Architecture
+```javascript
+// In-memory chat storage (resets on page refresh)
+let chatMessages = [];
+
+// Simple API call to our proxy endpoint
+async function sendMessage(userMessage) {
+  chatMessages.push({role: 'user', content: userMessage});
+  
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({messages: chatMessages})
+  });
+  
+  const data = await response.json();
+  const aiMessage = data.choices[0].message;
+  chatMessages.push(aiMessage);
+  
+  displayMessage(aiMessage);
+}
+```
+
+#### 3. UI Integration
+- **Location**: Chat modal/sidebar integrated into existing board view
+- **Access**: Toggle button in board header for unobtrusive access
+- **Styling**: Leverages existing DaisyUI components (modal, chat bubbles, input fields)
+- **JavaScript**: Vanilla JS implementation, no HTMX required for chat functionality
+- **UX**: Non-intrusive interface that doesn't disrupt existing Kanban workflow
+
+#### 4. Security & Environment
+- OpenAI API key stored in server-side `.env` file only
+- API key never exposed to client-side code
+- Server can implement rate limiting and authentication checks
+- All requests authenticated through existing user session system
+
+### Implementation Files
+1. **New API Route**: `src/routes/api.ts` (or extend existing routes)
+2. **UI Updates**: Modify `src/views/pages/boards/show.ejs` for chat interface
+3. **Client JavaScript**: Add chat functionality to board page script section
+4. **Environment**: Add `OPENAI_API_KEY` to `.env` configuration
+
+### Iterative Development Phases
+
+#### Phase 1 (v1): Basic Chatbot
+- Simple chat interface with no board context
+- Generic AI assistant responses
+- In-memory conversation history
+- Basic error handling and loading states
+
+#### Phase 2 (v2): Board Context Integration
+- Include board data (name, description, lists, cards) as AI context
+- AI responses aware of current board state
+- Context-aware suggestions and insights
+
+#### Phase 3 (v3): Enhanced Persistence
+- Optional: Add database storage for chat history
+- Cross-session conversation continuity
+- User preference settings for chat behavior
+
+#### Phase 4 (v4): Advanced Features
+- File/image upload support in chat
+- Integration with card creation/editing through chat
+- Advanced AI capabilities (task analysis, project insights)
+
+### Security Benefits
+- API key protection through server proxy pattern
+- Integration with existing authentication and authorization system
+- Server-side request logging and monitoring capabilities
+- Rate limiting and abuse prevention at application level
+- Easy to add additional security layers in future iterations
+
+### Development Philosophy
+- **Minimal Start**: Begin with simplest possible implementation
+- **Iterative Enhancement**: Add features incrementally based on user feedback
+- **Existing Pattern Compliance**: Follows established codebase patterns and conventions
+- **Security First**: Maintains security best practices from initial implementation
+
 ## Success Metrics
 - User registration to first board creation: < 5 minutes
 - Daily active users engaging with AI features: > 30%
