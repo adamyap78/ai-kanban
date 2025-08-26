@@ -3,19 +3,16 @@
     <!-- Header -->
     <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
         <div class="flex-1 min-w-0">
-            <% if (card?.id) { %>
-                <input type="text" 
-                       name="title" 
-                       value="<%= card?.title || '' %>" 
-                       class="input input-ghost w-full text-xl font-semibold text-gray-800 p-0 border-0 focus:border-0 focus:outline-0 bg-transparent" 
-                       form="card-form"
-                       required 
-                       maxlength="200"
-                       placeholder="Card title"
-                       onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('#cardDetailModal .btn-primary').click(); }">
-            <% } else { %>
-                <h2 class="text-xl font-semibold text-gray-800">Add New Card</h2>
-            <% } %>
+            <input type="text" 
+                   name="title" 
+                   value="<%= card?.title || '' %>" 
+                   class="input input-ghost w-full text-xl font-semibold text-gray-800 p-0 border-0 focus:border-0 focus:outline-0 bg-transparent" 
+                   form="card-form"
+                   required 
+                   maxlength="200"
+                   placeholder="Card title"
+                   autofocus
+                   onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('#cardDetailModal .btn-primary').click(); }">
         </div>
         <button onclick="document.getElementById('cardDetailModal').close()" class="btn btn-ghost btn-sm btn-circle ml-4">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,21 +36,6 @@
                 <% } %>
                 
                 <div class="space-y-6">
-                    <% if (!card?.id && listId) { %>
-                        <!-- For new cards, we still need the title field in the form -->
-                        <div class="form-control w-full">
-                            <input type="text" 
-                                   name="title" 
-                                   value="<%= card?.title || '' %>" 
-                                   class="input input-bordered w-full text-xl font-medium" 
-                                   required 
-                                   maxlength="200"
-                                   placeholder="Card title"
-                                   autofocus
-                                   onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('#cardDetailModal .btn-primary').click(); }">
-                        </div>
-                    <% } %>
-                    
                     <!-- Card Description -->
                     <div class="form-control w-full">
                         <label class="label">
