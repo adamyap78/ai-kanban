@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "concurrently \"nodemon src/server.ts\" \"npm run css:watch\"",
     "build": "tsc",
     "start": "node dist/server.js",
     "db:push": "drizzle-kit push",
@@ -47,6 +47,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.3.0",
     "bcryptjs": "^3.0.2",
+    "concurrently": "^9.2.1",
     "cookie-parser": "^1.4.7",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.4",
