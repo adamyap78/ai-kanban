@@ -1,0 +1,79 @@
+<!-- Kanban Board Content -->
+<div class="flex gap-6 overflow-x-auto pb-6 min-h-[600px] list-drop-zone" 
+     ondragover="handleListDragOver(event)" 
+     ondrop="handleListDrop(event)">
+    <% lists.forEach(list => { %>
+        <div class="flex-shrink-0 w-80 list-container" 
+             data-list-id="<%= list.id %>"
+             data-list-position="<%= list.position %>">
+            <!-- List Header -->
+            <div class="bg-base-200 rounded-t-lg p-4 list-drag-handle" 
+                 draggable="true"
+                 ondragstart="handleListDragStart(event)"
+                 ondragend="handleListDragEnd(event)"
+                 ondragover="event.preventDefault()">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-base-content/50 cursor-grab" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                        </svg>
+                        <h3 class="font-semibold text-lg text-secondary"><%= list.name %></h3>
+                    </div>
+                    <div class="dropdown dropdown-end">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"></path>
+                            </svg>
+                        </div>
+                        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                            <li><a hx-get="/cards/new?listId=<%= list.id %>" 
+                                   hx-target="#cardDetailContent" 
+                                   hx-trigger="click"
+                                   onclick="document.getElementById('cardDetailModal').showModal()">Add Card</a></li>
+                            <li><hr class="my-1"></li>
+                            <li><a onclick="editList('<%= list.id %>', '<%= list.name %>')">Edit List</a></li>
+                            <li><a onclick="deleteList('<%= list.id %>')" class="text-error">Delete List</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cards Container -->
+            <div class="bg-base-200 rounded-b-lg p-4 space-y-3 shadow-md drop-zone" 
+                 data-list-id="<%= list.id %>"
+                 ondragover="handleDragOver(event)"
+                 ondrop="handleDrop(event)">
+                <% if (cardsByList[list.id] && cardsByList[list.id].length > 0) { %>
+                    <% cardsByList[list.id].forEach(card => { %>
+                        <%- include('card-item', { card }) %>
+                    <% }); %>
+                <% } %>
+                
+                <!-- Add Card Button at Bottom -->
+                <button id="add-card-button-<%= list.id %>"
+                        hx-get="/cards/new?listId=<%= list.id %>" 
+                        hx-target="#cardDetailContent" 
+                        hx-trigger="click"
+                        onclick="document.getElementById('cardDetailModal').showModal()"
+                        class="w-full p-3 text-left text-base-content/70 hover:text-base-content hover:bg-base-300 rounded-lg transition-colors group cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span class="text-sm">Add a card</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    <% }); %>
+    
+    <!-- Add List Button -->
+    <div class="flex-shrink-0 w-80" draggable="false">
+        <button onclick="showAddListModal()" draggable="false" class="w-full h-32 border-2 border-dashed border-base-300 rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-primary/5 transition-colors">
+            <svg class="w-8 h-8 mb-2 text-base-content/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span class="text-base-content/70 font-medium">Add List</span>
+        </button>
+    </div>
+</div>

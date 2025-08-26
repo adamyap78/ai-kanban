@@ -133,6 +133,19 @@ router.get('/:orgSlug/boards/:boardId', async (req, res) => {
     const lists = await listService.getByBoard(boardId, req.user!.id);
     const cardsByList = await cardService.getByBoard(boardId, req.user!.id);
 
+    // Check if this is an AJAX request for refresh
+    const isAjaxRefresh = req.headers['x-requested-with'] === 'XMLHttpRequest';
+
+    if (isAjaxRefresh) {
+      // Return just the board content for refresh
+      return res.render('partials/board-content', {
+        lists,
+        cardsByList,
+        layout: false
+      });
+    }
+
+    // Return full page for initial load
     res.render('pages/boards/show', {
       title: board.name,
       hx: true, // Enable htmx for drag-and-drop functionality

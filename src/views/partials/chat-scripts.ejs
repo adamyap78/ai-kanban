@@ -3,6 +3,36 @@
 let chatMessages = [];
 let boardContext = null;
 
+// Board refresh functionality
+function refreshBoard() {
+    console.log('🔄 Refreshing board...');
+    
+    fetch(window.location.pathname, {
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(html => {
+        const boardContainer = document.getElementById('board-content');
+        if (boardContainer) {
+            boardContainer.innerHTML = html;
+            console.log('✅ Board refreshed successfully');
+        } else {
+            console.error('❌ Board container not found');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Failed to refresh board:', error);
+    });
+}
+
 function handleChatKeyDown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
         // Only handle enter key if the chat modal is open
@@ -205,6 +235,11 @@ function sendChatMessageStreaming() {
                     // Add completed message to conversation history
                     chatMessages.push({ role: 'assistant', content: streamedContent });
                     
+                    // Auto-refresh board after completion (assuming AI might have used tools)
+                    setTimeout(() => {
+                        refreshBoard();
+                    }, 500); // Small delay to ensure any backend operations are complete
+                    
                     eventSource.close();
                     resolve();
                 } else if (data.type === 'error') {
@@ -276,6 +311,11 @@ function sendChatMessageRegular() {
             
             // Add AI response to UI
             addMessageToUI('assistant', assistantMessage.content);
+            
+            // Auto-refresh board after completion (assuming AI might have used tools)
+            setTimeout(() => {
+                refreshBoard();
+            }, 500); // Small delay to ensure any backend operations are complete
         } else {
             throw new Error('Invalid response format');
         }
