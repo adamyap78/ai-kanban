@@ -99,7 +99,7 @@ async function executeToolCall(toolCall: any) {
 function formatBoardContext(boardContext: any): string {
   const { board, organization, lists, cards } = boardContext;
   
-  let context = `You are an AI assistant helping with a Kanban board. Here's the current context:
+  let context = `You are an AI assistant helping with a Kanban board. Here's the current state of the Kanban board. This state may change, depending on the actions you perform.
 
 BOARD INFORMATION:
 - Board: ${board.name} (ID: ${board.id})
@@ -219,9 +219,9 @@ router.post('/chat', async (req, res) => {
       // Get final response from AI after tool execution
       console.log('🔄 Getting final AI response after tool execution');
       completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4.1-nano',
         messages: finalMessages,
-        max_tokens: 500,
+        max_tokens: 1000,
         temperature: 0.7,
       });
     }
