@@ -345,7 +345,7 @@ function addMessageToUI(role, content) {
     
     if (role === 'assistant') {
         // Add header with timestamp
-        const headerDiv = document.createElement('div');
+    const headerDiv = document.createElement('div');
         headerDiv.className = 'chat-header text-xs opacity-50 mb-1';
         headerDiv.innerHTML = `AI Assistant <time class="text-xs opacity-50 ml-2">${new Date().toLocaleTimeString()}</time>`;
         messageDiv.appendChild(headerDiv);
@@ -358,7 +358,7 @@ function addMessageToUI(role, content) {
     }
     
     const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = `chat-bubble ${role === 'user' ? 'chat-bubble-secondary max-w-xs' : 'bg-gray-100 text-gray-800 max-w-2xl'}`;
+    bubbleDiv.className = `chat-bubble ${role === 'user' ? 'chat-bubble-secondary text-sm max-w-xs' : 'text-sm bg-gray-100 text-gray-800 max-w-2xl'}`;
     
     if (role === 'assistant' && typeof marked !== 'undefined') {
         // Render markdown for AI messages
@@ -390,7 +390,7 @@ function addStreamingMessageToUI(messageId) {
     messageDiv.appendChild(headerDiv);
     
     const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = 'chat-bubble bg-gray-100 text-gray-800 max-w-2xl';
+    bubbleDiv.className = 'text-sm chat-bubble bg-gray-100 text-gray-800 max-w-2xl';
     bubbleDiv.textContent = ''; // Start empty
     
     // Add cursor effect
