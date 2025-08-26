@@ -656,36 +656,101 @@ function deleteList(listId) {
 
 <!-- Chat Modal -->
 <dialog id="chatModal" class="modal">
-    <div class="modal-box max-w-2xl h-96 flex flex-col">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-lg">AI Assistant</h3>
-            <button class="btn btn-sm btn-circle btn-ghost" onclick="document.getElementById('chatModal').close()">✕</button>
+    <div class="modal-box max-w-4xl w-full h-[32rem] max-h-[32rem] flex flex-col p-0">
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-base-300 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="avatar placeholder">
+                    <div class="bg-primary text-primary-content rounded-full w-10 h-10">
+                        <span class="text-sm">AI</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">AI Assistant</h3>
+                    <p class="text-sm text-base-content/60">Online now</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="btn btn-sm btn-ghost btn-circle" onclick="clearChatHistory()" title="Clear chat">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+                <button class="btn btn-sm btn-circle btn-ghost" onclick="document.getElementById('chatModal').close()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
         
-        <!-- Chat Messages Container -->
-        <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 space-y-3 max-h-64">
+        <!-- Chat Messages Container with fixed height and scrolling -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             <div class="chat chat-start">
-                <div class="chat-bubble chat-bubble-primary">
-                    Hi! I'm your AI assistant. How can I help you today?
+                <div class="chat-image avatar">
+                    <div class="w-8 h-8 rounded-full">
+                        <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                            <span class="text-xs">AI</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-header text-xs opacity-50 mb-1">
+                    AI Assistant
+                    <time class="text-xs opacity-50 ml-2">now</time>
+                </div>
+                <div class="chat-bubble chat-bubble-primary max-w-xs">
+                    Hi! I'm your AI assistant. How can I help you with your Kanban board today?
                 </div>
             </div>
         </div>
         
-        <!-- Chat Input -->
-        <div class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Type your message..." class="input input-bordered flex-1" onkeypress="handleChatKeyPress(event)">
-            <button onclick="sendChatMessage()" class="btn btn-primary" id="sendButton">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-            </button>
+        <!-- Thinking indicator (inline with messages) -->
+        <div id="chatThinking" class="hidden px-4">
+            <div class="chat chat-start">
+                <div class="chat-image avatar">
+                    <div class="w-8 h-8 rounded-full">
+                        <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                            <span class="text-xs">AI</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-bubble bg-base-200 text-base-content max-w-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="loading loading-dots loading-sm"></span>
+                        <span class="text-sm">Thinking...</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <!-- Loading indicator -->
-        <div id="chatLoading" class="hidden mt-2">
-            <div class="chat chat-start">
-                <div class="chat-bubble bg-base-200">
-                    <span class="loading loading-dots loading-sm"></span>
+        <!-- Input Area (fixed at bottom) -->
+        <div class="p-4 border-t border-base-300 flex-shrink-0 bg-base-100">
+            <div class="flex gap-3 items-end">
+                <div class="flex-1">
+                    <textarea 
+                        id="chatInput" 
+                        placeholder="Type your message..." 
+                        class="textarea textarea-bordered w-full resize-none min-h-[2.5rem] max-h-32"
+                        rows="1"
+                        onkeydown="handleChatKeyDown(event)"
+                        oninput="adjustTextareaHeight(this)"></textarea>
+                </div>
+                <button 
+                    onclick="sendChatMessage()" 
+                    class="btn btn-primary btn-circle flex-shrink-0" 
+                    id="sendButton"
+                    disabled>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+                <div class="text-xs text-base-content/50">
+                    Press <kbd class="kbd kbd-xs">Enter</kbd> to send, <kbd class="kbd kbd-xs">Shift</kbd>+<kbd class="kbd kbd-xs">Enter</kbd> for new line
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="badge badge-outline badge-sm" id="chatStatus">Ready</div>
                 </div>
             </div>
         </div>
@@ -699,10 +764,74 @@ function deleteList(listId) {
 // Chat functionality
 let chatMessages = [];
 
-function handleChatKeyPress(event) {
-    if (event.key === 'Enter') {
+function handleChatKeyDown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
         sendChatMessage();
     }
+}
+
+function adjustTextareaHeight(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
+    
+    // Enable/disable send button based on content
+    const sendButton = document.getElementById('sendButton');
+    const hasContent = textarea.value.trim().length > 0;
+    sendButton.disabled = !hasContent;
+}
+
+function clearChatHistory() {
+    if (confirm('Are you sure you want to clear the chat history?')) {
+        chatMessages = [];
+        const messagesContainer = document.getElementById('chatMessages');
+        messagesContainer.innerHTML = `
+            <div class="chat chat-start">
+                <div class="chat-image avatar">
+                    <div class="w-8 h-8 rounded-full">
+                        <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                            <span class="text-xs">AI</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-header text-xs opacity-50 mb-1">
+                    AI Assistant
+                    <time class="text-xs opacity-50 ml-2">now</time>
+                </div>
+                <div class="chat-bubble chat-bubble-primary max-w-xs">
+                    Hi! I'm your AI assistant. How can I help you with your Kanban board today?
+                </div>
+            </div>
+        `;
+        updateChatStatus('Ready');
+    }
+}
+
+function updateChatStatus(status) {
+    const statusBadge = document.getElementById('chatStatus');
+    if (statusBadge) {
+        statusBadge.textContent = status;
+        statusBadge.className = `badge badge-outline badge-sm ${
+            status === 'Typing...' ? 'badge-warning' : 
+            status === 'Error' ? 'badge-error' : 'badge-success'
+        }`;
+    }
+}
+
+function showThinkingIndicator() {
+    const thinkingElement = document.getElementById('chatThinking');
+    thinkingElement.classList.remove('hidden');
+    
+    // Scroll to bottom to show thinking indicator
+    const messagesContainer = document.getElementById('chatMessages');
+    setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight + 100;
+    }, 50);
+}
+
+function hideThinkingIndicator() {
+    const thinkingElement = document.getElementById('chatThinking');
+    thinkingElement.classList.add('hidden');
 }
 
 function sendChatMessage() {
@@ -711,8 +840,12 @@ function sendChatMessage() {
     
     if (!message) return;
     
-    // Clear input and disable button
+    // Clear input and reset height
     input.value = '';
+    input.style.height = 'auto';
+    
+    // Update UI state
+    updateChatStatus('Typing...');
     const sendButton = document.getElementById('sendButton');
     sendButton.disabled = true;
     
@@ -722,6 +855,9 @@ function sendChatMessage() {
     // Add user message to conversation
     chatMessages.push({ role: 'user', content: message });
     
+    // Show thinking indicator
+    showThinkingIndicator();
+    
     // Try streaming first, fallback to regular POST if it fails
     sendChatMessageStreaming()
         .catch(error => {
@@ -729,18 +865,15 @@ function sendChatMessage() {
             sendChatMessageRegular();
         })
         .finally(() => {
-            // Re-enable send button
+            // Reset UI state
+            hideThinkingIndicator();
+            updateChatStatus('Ready');
             sendButton.disabled = false;
         });
 }
 
 function sendChatMessageStreaming() {
     return new Promise((resolve, reject) => {
-        // Show typing indicator instead of loading dots
-        document.getElementById('chatLoading').classList.remove('hidden');
-        const loadingBubble = document.querySelector('#chatLoading .chat-bubble');
-        loadingBubble.innerHTML = '<span class="loading loading-dots loading-sm"></span> Thinking...';
-        
         // Create streaming AI message container
         const streamingMessageId = 'streaming-message-' + Date.now();
         addStreamingMessageToUI(streamingMessageId);
@@ -760,9 +893,6 @@ function sendChatMessageStreaming() {
                     streamedContent += data.content;
                     updateStreamingMessage(streamingMessageId, streamedContent);
                 } else if (data.type === 'complete') {
-                    // Hide loading indicator
-                    document.getElementById('chatLoading').classList.add('hidden');
-                    
                     // Finalize the streaming message (remove cursor)
                     finalizeStreamingMessage(streamingMessageId);
                     
@@ -773,8 +903,6 @@ function sendChatMessageStreaming() {
                     resolve();
                 } else if (data.type === 'error') {
                     hasError = true;
-                    // Hide loading indicator
-                    document.getElementById('chatLoading').classList.add('hidden');
                     
                     // Remove streaming message and show error
                     removeStreamingMessage(streamingMessageId);
@@ -790,9 +918,6 @@ function sendChatMessageStreaming() {
         
         eventSource.onerror = function(event) {
             console.error('SSE connection error:', event);
-            
-            // Hide loading indicator
-            document.getElementById('chatLoading').classList.add('hidden');
             
             if (!hasError) {
                 // Remove streaming message
@@ -817,11 +942,6 @@ function sendChatMessageStreaming() {
 }
 
 function sendChatMessageRegular() {
-    // Show loading indicator
-    document.getElementById('chatLoading').classList.remove('hidden');
-    const loadingBubble = document.querySelector('#chatLoading .chat-bubble');
-    loadingBubble.innerHTML = '<span class="loading loading-dots loading-sm"></span>';
-    
     // Send to API using original method
     fetch('/api/chat', {
         method: 'POST',
@@ -837,9 +957,6 @@ function sendChatMessageRegular() {
         return response.json();
     })
     .then(data => {
-        // Hide loading indicator
-        document.getElementById('chatLoading').classList.add('hidden');
-        
         if (data.choices && data.choices[0] && data.choices[0].message) {
             const assistantMessage = data.choices[0].message;
             
@@ -854,9 +971,7 @@ function sendChatMessageRegular() {
     })
     .catch(error => {
         console.error('Chat error:', error);
-        
-        // Hide loading indicator
-        document.getElementById('chatLoading').classList.add('hidden');
+        updateChatStatus('Error');
         
         // Show error message
         addMessageToUI('assistant', 'Sorry, I encountered an error. Please try again.');
@@ -869,8 +984,34 @@ function addMessageToUI(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat ${role === 'user' ? 'chat-end' : 'chat-start'}`;
     
+    // Create avatar for assistant messages
+    if (role === 'assistant') {
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'chat-image avatar';
+        avatarDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-full">
+                <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                    <span class="text-xs">AI</span>
+                </div>
+            </div>
+        `;
+        messageDiv.appendChild(avatarDiv);
+        
+        // Add header with timestamp
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'chat-header text-xs opacity-50 mb-1';
+        headerDiv.innerHTML = `AI Assistant <time class="text-xs opacity-50 ml-2">${new Date().toLocaleTimeString()}</time>`;
+        messageDiv.appendChild(headerDiv);
+    } else {
+        // Add header for user messages
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'chat-header text-xs opacity-50 mb-1';
+        headerDiv.innerHTML = `You <time class="text-xs opacity-50 ml-2">${new Date().toLocaleTimeString()}</time>`;
+        messageDiv.appendChild(headerDiv);
+    }
+    
     const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = `chat-bubble ${role === 'user' ? 'chat-bubble-secondary' : 'chat-bubble-primary'}`;
+    bubbleDiv.className = `chat-bubble max-w-xs ${role === 'user' ? 'chat-bubble-secondary' : 'chat-bubble-primary'}`;
     bubbleDiv.textContent = content;
     
     messageDiv.appendChild(bubbleDiv);
@@ -887,8 +1028,26 @@ function addStreamingMessageToUI(messageId) {
     messageDiv.id = messageId;
     messageDiv.className = 'chat chat-start';
     
+    // Create avatar
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'chat-image avatar';
+    avatarDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-full">
+            <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                <span class="text-xs">AI</span>
+            </div>
+        </div>
+    `;
+    messageDiv.appendChild(avatarDiv);
+    
+    // Add header
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'chat-header text-xs opacity-50 mb-1';
+    headerDiv.innerHTML = `AI Assistant <time class="text-xs opacity-50 ml-2">${new Date().toLocaleTimeString()}</time>`;
+    messageDiv.appendChild(headerDiv);
+    
     const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = 'chat-bubble chat-bubble-primary';
+    bubbleDiv.className = 'chat-bubble chat-bubble-primary max-w-xs';
     bubbleDiv.textContent = ''; // Start empty
     
     // Add cursor effect
