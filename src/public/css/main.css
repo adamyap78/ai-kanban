@@ -7,7 +7,11 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-blue-600: oklch(54.6% 0.245 262.881);
+    --color-blue-800: oklch(42.4% 0.199 265.638);
     --color-gray-100: oklch(96.7% 0.003 264.542);
+    --color-gray-200: oklch(92.8% 0.006 264.531);
+    --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-black: #000;
     --spacing: 0.25rem;
@@ -2801,6 +2805,115 @@
   cursor: grabbing;
   --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
   box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+.chat-bubble h1 {
+  margin-top: calc(var(--spacing) * 3);
+  margin-bottom: calc(var(--spacing) * 2);
+  font-size: var(--text-lg);
+  line-height: var(--tw-leading, var(--text-lg--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  &:first-child {
+    margin-top: calc(var(--spacing) * 0);
+  }
+}
+.chat-bubble h2 {
+  margin-top: calc(var(--spacing) * 3);
+  margin-bottom: calc(var(--spacing) * 2);
+  font-size: var(--text-base);
+  line-height: var(--tw-leading, var(--text-base--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  &:first-child {
+    margin-top: calc(var(--spacing) * 0);
+  }
+}
+.chat-bubble h3 {
+  margin-top: calc(var(--spacing) * 2);
+  margin-bottom: calc(var(--spacing) * 1);
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  &:first-child {
+    margin-top: calc(var(--spacing) * 0);
+  }
+}
+.chat-bubble p {
+  margin-bottom: calc(var(--spacing) * 2);
+  &:last-child {
+    margin-bottom: calc(var(--spacing) * 0);
+  }
+}
+.chat-bubble code {
+  border-radius: 0.25rem;
+  background-color: var(--color-gray-200);
+  padding-inline: calc(var(--spacing) * 1);
+  padding-block: calc(var(--spacing) * 0.5);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+  color: var(--color-gray-800);
+}
+.chat-bubble pre {
+  margin-block: calc(var(--spacing) * 2);
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-gray-200);
+  padding: calc(var(--spacing) * 3);
+  color: var(--color-gray-800);
+  &:first-child {
+    margin-top: calc(var(--spacing) * 0);
+  }
+  &:last-child {
+    margin-bottom: calc(var(--spacing) * 0);
+  }
+}
+.chat-bubble pre code {
+  background-color: transparent;
+  padding: calc(var(--spacing) * 0);
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+}
+.chat-bubble ul {
+  margin-bottom: calc(var(--spacing) * 2);
+  margin-left: calc(var(--spacing) * 2);
+  list-style-position: inside;
+  list-style-type: disc;
+}
+.chat-bubble ol {
+  margin-bottom: calc(var(--spacing) * 2);
+  margin-left: calc(var(--spacing) * 2);
+  list-style-position: inside;
+  list-style-type: decimal;
+}
+.chat-bubble li {
+  margin-bottom: calc(var(--spacing) * 1);
+}
+.chat-bubble blockquote {
+  margin-block: calc(var(--spacing) * 2);
+  margin-left: calc(var(--spacing) * 2);
+  border-left-style: var(--tw-border-style);
+  border-left-width: 4px;
+  border-color: var(--color-gray-300);
+  padding-left: calc(var(--spacing) * 3);
+  font-style: italic;
+}
+.chat-bubble strong {
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+}
+.chat-bubble em {
+  font-style: italic;
+}
+.chat-bubble a {
+  color: var(--color-blue-600);
+  text-decoration-line: underline;
+  &:hover {
+    @media (hover: hover) {
+      color: var(--color-blue-800);
+    }
+  }
 }
 @layer base {
   :where(:root),:root:has(input.theme-controller[value=light]:checked),[data-theme=light] {

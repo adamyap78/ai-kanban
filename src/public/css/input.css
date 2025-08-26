@@ -34,3 +34,60 @@
 .list-container.list-dragging {
   @apply cursor-grabbing shadow-2xl transform rotate-1 scale-105;
 }
+
+/* Markdown Styles for Chat Messages */
+.chat-bubble h1 {
+  @apply text-lg font-bold mt-3 mb-2 first:mt-0;
+}
+
+.chat-bubble h2 {
+  @apply text-base font-bold mt-3 mb-2 first:mt-0;
+}
+
+.chat-bubble h3 {
+  @apply text-sm font-bold mt-2 mb-1 first:mt-0;
+}
+
+.chat-bubble p {
+  @apply mb-2 last:mb-0;
+}
+
+.chat-bubble code {
+  @apply bg-gray-200 text-gray-800 px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.chat-bubble pre {
+  @apply bg-gray-200 text-gray-800 p-3 rounded-lg overflow-x-auto my-2 first:mt-0 last:mb-0;
+}
+
+.chat-bubble pre code {
+  @apply bg-transparent p-0 text-sm;
+}
+
+.chat-bubble ul {
+  @apply list-disc list-inside mb-2 ml-2;
+}
+
+.chat-bubble ol {
+  @apply list-decimal list-inside mb-2 ml-2;
+}
+
+.chat-bubble li {
+  @apply mb-1;
+}
+
+.chat-bubble blockquote {
+  @apply border-l-4 border-gray-300 pl-3 ml-2 italic my-2;
+}
+
+.chat-bubble strong {
+  @apply font-bold;
+}
+
+.chat-bubble em {
+  @apply italic;
+}
+
+.chat-bubble a {
+  @apply text-blue-600 underline hover:text-blue-800;
+}

@@ -750,6 +750,9 @@ function deleteList(listId) {
     </form>
 </dialog>
 
+<!-- Marked.js for Markdown Rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <script>
 // Chat functionality
 let chatMessages = [];
@@ -845,8 +848,8 @@ function sendChatMessageStreaming() {
                     streamedContent += data.content;
                     updateStreamingMessage(streamingMessageId, streamedContent);
                 } else if (data.type === 'complete') {
-                    // Finalize the streaming message (remove cursor)
-                    finalizeStreamingMessage(streamingMessageId);
+                    // Finalize the streaming message (remove cursor and render markdown)
+                    finalizeStreamingMessage(streamingMessageId, streamedContent);
                     
                     // Add completed message to conversation history
                     chatMessages.push({ role: 'assistant', content: streamedContent });
@@ -963,7 +966,14 @@ function addMessageToUI(role, content) {
     
     const bubbleDiv = document.createElement('div');
     bubbleDiv.className = `chat-bubble ${role === 'user' ? 'chat-bubble-secondary max-w-xs' : 'bg-gray-100 text-gray-800 max-w-2xl'}`;
-    bubbleDiv.textContent = content;
+    
+    if (role === 'assistant' && typeof marked !== 'undefined') {
+        // Render markdown for AI messages
+        bubbleDiv.innerHTML = marked.parse(content);
+    } else {
+        // Plain text for user messages (security) or fallback
+        bubbleDiv.textContent = content;
+    }
     
     messageDiv.appendChild(bubbleDiv);
     messagesContainer.appendChild(messageDiv);
@@ -1042,17 +1052,22 @@ function removeStreamingMessage(messageId) {
     }
 }
 
-function finalizeStreamingMessage(messageId) {
+function finalizeStreamingMessage(messageId, content) {
     const messageElement = document.getElementById(messageId);
     if (!messageElement) return;
     
     const bubbleDiv = messageElement.querySelector('.chat-bubble');
     if (!bubbleDiv) return;
     
-    // Remove cursor and finalize message
-    const cursorSpan = bubbleDiv.querySelector('.animate-pulse');
-    if (cursorSpan) {
-        cursorSpan.remove();
+    // Remove cursor and render markdown
+    if (content && typeof marked !== 'undefined') {
+        bubbleDiv.innerHTML = marked.parse(content);
+    } else {
+        // Fallback: remove cursor and keep text content
+        const cursorSpan = bubbleDiv.querySelector('.animate-pulse');
+        if (cursorSpan) {
+            cursorSpan.remove();
+        }
     }
     
     // Remove the ID so it becomes a regular message

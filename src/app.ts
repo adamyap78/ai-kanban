@@ -18,7 +18,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"], // for htmx and inline scripts
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://cdn.jsdelivr.net"], // for htmx, marked.js and inline scripts
       scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers like onclick
       imgSrc: ["'self'", "data:", "https:"],
     },
