@@ -4,8 +4,12 @@ let chatMessages = [];
 
 function handleChatKeyDown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendChatMessage();
+        // Only handle enter key if the chat modal is open
+        const chatModal = document.getElementById('chatModal');
+        if (chatModal && chatModal.open) {
+            event.preventDefault();
+            sendChatMessage();
+        }
     }
 }
 

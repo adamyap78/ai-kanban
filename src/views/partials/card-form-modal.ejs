@@ -28,7 +28,7 @@
                        maxlength="200"
                        placeholder="Card title"
                        autofocus
-                       onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('.btn-primary').click(); }">
+                       onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('#cardDetailModal .btn-primary').click(); }">
             </div>
             
             <div class="form-control w-full">
@@ -43,7 +43,7 @@
                        name="dueDate" 
                        value="<%= card?.dueDate ? new Date(card.dueDate).toISOString().split('T')[0] : '' %>" 
                        class="input input-bordered w-full"
-                       onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('.btn-primary').click(); }">
+                       onkeypress="if(event.key==='Enter') { event.preventDefault(); document.querySelector('#cardDetailModal .btn-primary').click(); }">
             </div>
         </div>
         
