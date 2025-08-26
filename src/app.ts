@@ -59,6 +59,7 @@ import organizationRoutes from './routes/organizations';
 import boardRoutes from './routes/boards';
 import listRoutes from './routes/lists';
 import cardRoutes from './routes/cards';
+import apiRoutes from './routes/api';
 import { extractUser } from './middleware/auth';
 import { validateReferer } from './middleware/validation';
 
@@ -81,6 +82,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/orgs', organizationRoutes);
