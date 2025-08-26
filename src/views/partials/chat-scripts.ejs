@@ -23,6 +23,12 @@ function refreshBoard() {
         const boardContainer = document.getElementById('board-content');
         if (boardContainer) {
             boardContainer.innerHTML = html;
+            
+            // Re-process HTMX attributes on new elements
+            if (typeof htmx !== 'undefined') {
+                htmx.process(boardContainer);
+            }
+            
             console.log('✅ Board refreshed successfully');
         } else {
             console.error('❌ Board container not found');
