@@ -1,0 +1,500 @@
+<script>
+// Add List Modal Functions
+function showAddListModal() {
+    document.getElementById('addListModal').showModal();
+}
+
+function closeAddListModal() {
+    document.getElementById('addListModal').close();
+}
+
+
+// Card Detail Functions - now handled by htmx
+
+// Drag and Drop Variables
+let draggedCard = null;
+let draggedFromList = null;
+
+// Sort cards in a list by their position values
+function sortCardsByPosition(listElement) {
+    const cards = Array.from(listElement.querySelectorAll('[data-card-id]'));
+    const addButton = listElement.querySelector('.w-full'); // "Add card" button
+    
+    // Sort cards by position
+    cards.sort((a, b) => {
+        const posA = parseFloat(a.dataset.cardPosition || '0');
+        const posB = parseFloat(b.dataset.cardPosition || '0');
+        return posA - posB;
+    });
+    
+    // Remove all cards from DOM
+    cards.forEach(card => card.remove());
+    
+    // Re-insert cards in correct order (before add button)
+    cards.forEach(card => {
+        if (addButton) {
+            listElement.insertBefore(card, addButton);
+        } else {
+            listElement.appendChild(card);
+        }
+    });
+    
+    console.log('Sorted', cards.length, 'cards in list', listElement.dataset.listId);
+}
+
+// Revert a failed card move
+function revertCardMove(card, originalList, originalPosition) {
+    if (!card || !originalList) return;
+    
+    console.log('Reverting card move to original position', originalPosition);
+    
+    // Restore original position data
+    card.dataset.cardPosition = originalPosition;
+    
+    // Move card back to original list
+    const originalAddButton = originalList.querySelector('.w-full');
+    if (originalAddButton) {
+        originalList.insertBefore(card, originalAddButton);
+    } else {
+        originalList.appendChild(card);
+    }
+    
+    // Re-sort both lists to ensure proper order
+    sortCardsByPosition(originalList);
+    
+    // Also sort the target list if it's different
+    const currentList = card.closest('.drop-zone');
+    if (currentList && currentList !== originalList) {
+        sortCardsByPosition(currentList);
+    }
+}
+
+// Drag and Drop Functions
+function handleDragStart(event) {
+    draggedCard = event.target;
+    draggedFromList = event.target.closest('.drop-zone');
+    
+    // Add visual feedback
+    event.target.style.opacity = '0.5';
+    event.target.classList.add('dragging');
+    
+    // Store data for the drag operation
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', event.target.outerHTML);
+    
+    console.log('Drag started for card:', event.target.dataset.cardId);
+}
+
+function handleDragEnd(event) {
+    // Clean up visual feedback
+    event.target.style.opacity = '';
+    event.target.classList.remove('dragging');
+    
+    // Remove drag-over effects from all drop zones
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+        zone.classList.remove('drag-over');
+    });
+    
+    // Remove list-drag-over effects from board (in case card drag triggered it)
+    document.querySelectorAll('.list-drop-zone').forEach(zone => {
+        zone.classList.remove('list-drag-over');
+    });
+    
+    console.log('Drag ended');
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    
+    // Add visual feedback to drop zone
+    event.currentTarget.classList.add('drag-over');
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation(); // Prevent bubbling to list drop handler
+    
+    const dropZone = event.currentTarget;
+    const targetListId = dropZone.dataset.listId;
+    
+    if (!draggedCard || !targetListId) {
+        console.error('Invalid drop operation');
+        return;
+    }
+    
+    const cardId = draggedCard.dataset.cardId;
+    const sourceListId = draggedFromList.dataset.listId;
+    const originalPosition = parseFloat(draggedCard.dataset.cardPosition || '1');
+    
+    // Calculate new position first
+    const cardsInTargetList = Array.from(dropZone.querySelectorAll('[data-card-id]'));
+    const dropY = event.clientY;
+    let newPosition = 1;
+    
+    if (cardsInTargetList.length > 0) {
+        // Find insertion point based on mouse position
+        let insertAfter = null;
+        
+        for (let i = 0; i < cardsInTargetList.length; i++) {
+            const card = cardsInTargetList[i];
+            if (card === draggedCard) continue; // Skip the dragged card itself
+            
+            const rect = card.getBoundingClientRect();
+            const cardCenterY = rect.top + rect.height / 2;
+            
+            if (dropY < cardCenterY) {
+                break; // Insert before this card
+            }
+            insertAfter = card;
+        }
+        
+        if (insertAfter) {
+            // Get position of card we're inserting after
+            const afterPosition = parseFloat(insertAfter.dataset.cardPosition || '1');
+            const nextCard = insertAfter.nextElementSibling;
+            
+            if (nextCard && nextCard !== draggedCard) {
+                // Insert between two cards
+                const nextPosition = parseFloat(nextCard.dataset.cardPosition || (afterPosition + 2));
+                newPosition = (afterPosition + nextPosition) / 2;
+            } else {
+                // Insert at end
+                newPosition = afterPosition + 1;
+            }
+        } else {
+            // Insert at beginning
+            const firstCard = cardsInTargetList.find(card => card !== draggedCard);
+            if (firstCard) {
+                const firstPosition = parseFloat(firstCard.dataset.cardPosition || '2');
+                newPosition = firstPosition / 2;
+            }
+        }
+    }
+    
+    // Don't do anything if dropped in the exact same position
+    if (sourceListId === targetListId && Math.abs(originalPosition - newPosition) < 0.001) {
+        console.log('Card dropped in same position, no move needed');
+        dropZone.classList.remove('drag-over');
+        return;
+    }
+    
+    console.log('Moving card', cardId, 'to list', targetListId, 'at position', newPosition);
+    
+    // Update the card's position data immediately
+    draggedCard.dataset.cardPosition = newPosition;
+    
+    // Optimistically update the UI
+    if (sourceListId !== targetListId) {
+        // Cross-list move: move card to target list
+        const addButton = dropZone.querySelector('.w-full');
+        if (addButton) {
+            dropZone.insertBefore(draggedCard, addButton);
+        } else {
+            dropZone.appendChild(draggedCard);
+        }
+    }
+    
+    // Sort cards in affected lists to ensure proper positioning
+    sortCardsByPosition(dropZone); // Always sort target list
+    if (sourceListId !== targetListId && draggedFromList) {
+        sortCardsByPosition(draggedFromList); // Sort source list if different
+    }
+    
+    // Make API call to update backend
+    fetch(`/cards/${cardId}/move`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            listId: targetListId,
+            position: newPosition
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Card moved successfully');
+            // Position data already updated above, all good!
+        } else {
+            console.error('Failed to move card:', data.error);
+            // Revert the changes
+            revertCardMove(draggedCard, draggedFromList, originalPosition);
+        }
+    })
+    .catch(error => {
+        console.error('Error moving card:', error);
+        // Revert the changes  
+        revertCardMove(draggedCard, draggedFromList, originalPosition);
+    })
+    .finally(() => {
+        // Clean up
+        dropZone.classList.remove('drag-over');
+        draggedCard = null;
+        draggedFromList = null;
+    });
+}
+
+// List Drag and Drop Variables
+let draggedList = null;
+let draggedFromBoard = null;
+
+// Sort lists by their position values
+function sortListsByPosition(boardElement) {
+    const lists = Array.from(boardElement.querySelectorAll('.list-container'));
+    
+    // Sort lists by position
+    lists.sort((a, b) => {
+        const posA = parseFloat(a.dataset.listPosition || '0');
+        const posB = parseFloat(b.dataset.listPosition || '0');
+        return posA - posB;
+    });
+    
+    // Remove all lists from DOM
+    lists.forEach(list => list.remove());
+    
+    // Re-insert lists in correct order
+    lists.forEach(list => {
+        boardElement.appendChild(list);
+    });
+    
+    console.log('Sorted', lists.length, 'lists in board');
+}
+
+// List Drag and Drop Functions
+function handleListDragStart(event) {
+    // The drag started from the drag handle, so we need to find the list container
+    draggedList = event.target.closest('.list-container');
+    draggedFromBoard = draggedList.parentElement;
+    
+    // Add visual feedback to the list container
+    draggedList.style.opacity = '0.5';
+    draggedList.classList.add('list-dragging');
+    
+    // Store data for the drag operation
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', event.target.outerHTML);
+    
+    console.log('List drag started for:', draggedList.dataset.listId);
+}
+
+function handleListDragEnd(event) {
+    // Clean up visual feedback from the list container
+    if (draggedList) {
+        draggedList.style.opacity = '';
+        draggedList.classList.remove('list-dragging');
+    }
+    
+    // Remove drag-over effects from board
+    document.querySelectorAll('.list-drop-zone').forEach(zone => {
+        zone.classList.remove('list-drag-over');
+    });
+    
+    console.log('List drag ended');
+}
+
+function handleListDragOver(event) {
+    event.preventDefault();
+    
+    // Only show list drag feedback if we're actually dragging a list
+    if (!draggedList || draggedCard) {
+        return; // Exit if dragging a card instead of a list
+    }
+    
+    event.dataTransfer.dropEffect = 'move';
+    
+    // Add visual feedback to board
+    event.currentTarget.classList.add('list-drag-over');
+}
+
+function handleListDrop(event) {
+    event.preventDefault();
+    
+    const boardDropZone = event.currentTarget;
+    
+    // Only handle if we're actually dragging a list, not a card
+    if (!draggedList || draggedCard) {
+        return; // Exit silently if this is a card drag or no list being dragged
+    }
+    
+    const listId = draggedList.dataset.listId;
+    const originalPosition = parseFloat(draggedList.dataset.listPosition || '1');
+    
+    // Calculate new position based on horizontal drop position
+    const listsInBoard = Array.from(boardDropZone.querySelectorAll('.list-container'));
+    const dropX = event.clientX;
+    let newPosition = 1;
+    
+    // Filter out the dragged list itself for position calculation
+    const otherLists = listsInBoard.filter(list => list !== draggedList);
+    
+    if (otherLists.length > 0) {
+        // Find insertion point based on mouse position
+        let insertAfter = null;
+        
+        for (let i = 0; i < otherLists.length; i++) {
+            const list = otherLists[i];
+            
+            const rect = list.getBoundingClientRect();
+            const listCenterX = rect.left + rect.width / 2;
+            
+            if (dropX < listCenterX) {
+                break; // Insert before this list
+            }
+            insertAfter = list;
+        }
+        
+        if (insertAfter) {
+            // Get position of list we're inserting after
+            const afterPosition = parseFloat(insertAfter.dataset.listPosition || '1');
+            
+            // Find the next list in our filtered array
+            const afterIndex = otherLists.indexOf(insertAfter);
+            const nextList = otherLists[afterIndex + 1];
+            
+            if (nextList) {
+                // Insert between two lists
+                const nextPosition = parseFloat(nextList.dataset.listPosition || (afterPosition + 2));
+                newPosition = (afterPosition + nextPosition) / 2;
+            } else {
+                // Insert at end
+                newPosition = afterPosition + 1;
+            }
+        } else {
+            // Insert at beginning
+            if (otherLists.length > 0) {
+                const firstList = otherLists[0];
+                const firstPosition = parseFloat(firstList.dataset.listPosition || '2');
+                newPosition = firstPosition / 2;
+            }
+        }
+    }
+    
+    // Don't do anything if dropped in the exact same position
+    if (Math.abs(originalPosition - newPosition) < 0.001) {
+        console.log('List dropped in same position, no move needed');
+        boardDropZone.classList.remove('list-drag-over');
+        return;
+    }
+    
+    console.log('Moving list', listId, 'to position', newPosition);
+    console.log('Other lists in board:', otherLists.length);
+    console.log('Drop X:', dropX);
+    console.log('Original position:', originalPosition, 'New position:', newPosition);
+    
+    // Update the list's position data immediately
+    draggedList.dataset.listPosition = newPosition;
+    
+    // Sort lists to ensure proper positioning
+    sortListsByPosition(boardDropZone);
+    
+    // Make API call to update backend
+    fetch(`/lists/${listId}/position`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            position: newPosition
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('List moved successfully, refreshing page...');
+            location.reload();
+        } else {
+            console.error('Failed to move list:', data.error);
+            alert('Failed to move list: ' + (data.error || 'Unknown error'));
+            location.reload(); // Refresh to reset the UI
+        }
+    })
+    .catch(error => {
+        console.error('Error moving list:', error);
+        alert('Failed to move list');
+        location.reload(); // Refresh to reset the UI
+    })
+    .finally(() => {
+        // Clean up
+        boardDropZone.classList.remove('list-drag-over');
+        draggedList = null;
+        draggedFromBoard = null;
+    });
+}
+
+// Card Management Functions
+function deleteCardAndRefresh(cardId) {
+    if (confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
+        fetch(`/cards/${cardId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Card deleted successfully, refreshing page...');
+                location.reload();
+            } else {
+                console.error('Failed to delete card:', data.error);
+                alert('Failed to delete card: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting card:', error);
+            alert('Failed to delete card');
+        });
+    }
+}
+
+// List Management Functions
+function editList(listId, currentName) {
+    const newName = prompt('Enter new list name:', currentName);
+    if (newName && newName !== currentName) {
+        fetch(`/lists/${listId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to update list: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to update list');
+        });
+    }
+}
+
+function deleteList(listId) {
+    if (confirm('Are you sure you want to delete this list? This will also delete all cards in the list.')) {
+        fetch(`/lists/${listId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to delete list: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete list');
+        });
+    }
+}
+</script>
