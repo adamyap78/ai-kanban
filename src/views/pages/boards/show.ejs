@@ -791,6 +791,60 @@ function hideThinkingIndicator() {
     thinkingElement.classList.add('hidden');
 }
 
+function applyBasicFormatting(text) {
+    // Split into lines for processing
+    const lines = text.split('\n');
+    const formattedLines = lines.map(line => {
+        // Handle headings
+        if (line.startsWith('# ')) {
+            return `<h1 class="text-lg font-bold mt-3 mb-2 first:mt-0">${line.substring(2)}</h1>`;
+        } else if (line.startsWith('## ')) {
+            return `<h2 class="text-base font-bold mt-3 mb-2 first:mt-0">${line.substring(3)}</h2>`;
+        } else if (line.startsWith('### ')) {
+            return `<h3 class="text-sm font-bold mt-2 mb-1 first:mt-0">${line.substring(4)}</h3>`;
+        }
+        
+        // Handle lists (bullet points and numbered)
+        else if (line.match(/^[\s]*[-*]\s+/)) {
+            const indent = line.match(/^(\s*)/)[1].length;
+            const content = line.replace(/^[\s]*[-*]\s+/, '');
+            const marginLeft = indent > 0 ? `ml-${Math.min(indent, 8)}` : 'ml-2';
+            return `<div class="flex items-start ${marginLeft} mb-1"><span class="mr-2 mt-1 w-1 h-1 bg-gray-600 rounded-full flex-shrink-0"></span><span>${content}</span></div>`;
+        } else if (line.match(/^[\s]*\d+\.\s+/)) {
+            const indent = line.match(/^(\s*)/)[1].length;
+            const content = line.replace(/^[\s]*\d+\.\s+/, '');
+            const number = line.match(/\d+/)[0];
+            const marginLeft = indent > 0 ? `ml-${Math.min(indent, 8)}` : 'ml-2';
+            return `<div class="flex items-start ${marginLeft} mb-1"><span class="mr-2 text-sm font-medium text-gray-600 flex-shrink-0">${number}.</span><span>${content}</span></div>`;
+        }
+        
+        // Regular line - return as is
+        return line;
+    });
+    
+    // Join with <br> for line breaks, but don't add <br> after block elements
+    let result = '';
+    for (let i = 0; i < formattedLines.length; i++) {
+        const line = formattedLines[i];
+        result += line;
+        
+        // Add <br> only if:
+        // 1. Not the last line
+        // 2. Current line is not a block element (heading, list item)
+        // 3. Next line is not a block element
+        if (i < formattedLines.length - 1) {
+            const isCurrentBlock = line.includes('<h1') || line.includes('<h2') || line.includes('<h3') || line.includes('<div class="flex');
+            const isNextBlock = formattedLines[i + 1].includes('<h1') || formattedLines[i + 1].includes('<h2') || formattedLines[i + 1].includes('<h3') || formattedLines[i + 1].includes('<div class="flex');
+            
+            if (!isCurrentBlock && !isNextBlock && line.trim() !== '') {
+                result += '<br>';
+            }
+        }
+    }
+    
+    return result;
+}
+
 function sendChatMessage() {
     const input = document.getElementById('chatInput');
     const message = input.value.trim();
@@ -1031,9 +1085,12 @@ function updateStreamingMessage(messageId, content) {
     const bubbleDiv = messageElement.querySelector('.chat-bubble');
     if (!bubbleDiv) return;
     
-    // Update content while preserving cursor
+    // Apply basic formatting for better streaming appearance
+    const formattedContent = applyBasicFormatting(content);
+    
+    // Update content with basic formatting and preserve cursor
     const cursorSpan = bubbleDiv.querySelector('.animate-pulse');
-    bubbleDiv.textContent = content;
+    bubbleDiv.innerHTML = formattedContent;
     
     // Re-add cursor
     if (cursorSpan) {
