@@ -2702,11 +2702,17 @@
   .h-32 {
     height: calc(var(--spacing) * 32);
   }
+  .h-\[85vh\] {
+    height: 85vh;
+  }
   .h-full {
     height: 100%;
   }
   .max-h-32 {
     max-height: calc(var(--spacing) * 32);
+  }
+  .max-h-screen {
+    max-height: 100vh;
   }
   .min-h-0 {
     min-height: calc(var(--spacing) * 0);
@@ -2740,6 +2746,9 @@
   }
   .w-11 {
     width: calc(var(--spacing) * 11);
+  }
+  .w-11\/12 {
+    width: calc(11/12 * 100%);
   }
   .w-52 {
     width: calc(var(--spacing) * 52);
@@ -2926,6 +2935,9 @@
       margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
       margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
     }
+  }
+  .overflow-hidden {
+    overflow: hidden;
   }
   .overflow-x-auto {
     overflow-x: auto;
