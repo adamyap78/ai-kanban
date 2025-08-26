@@ -9,6 +9,44 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Helper function to format board context for AI
+function formatBoardContext(boardContext: any): string {
+  const { board, organization, lists, cards } = boardContext;
+  
+  let context = `You are an AI assistant helping with a Kanban board. Here's the current context:
+
+BOARD INFORMATION:
+- Board: ${board.name} (ID: ${board.id})
+- Description: ${board.description || 'No description'}
+- Organization: ${organization.name}
+
+LISTS:`;
+
+  lists.forEach((list: any) => {
+    context += `\n- List: "${list.name}" (ID: ${list.id}, Position: ${list.position})`;
+  });
+
+  context += `\n\nCARDS:`;
+  
+  Object.entries(cards).forEach(([listId, cardList]) => {
+    const list = lists.find((l: any) => l.id === listId);
+    const listName = list ? list.name : 'Unknown List';
+    context += `\n\nIn list "${listName}" (ID: ${listId}):`;
+    
+    if (Array.isArray(cardList) && cardList.length > 0) {
+      cardList.forEach((card: any) => {
+        context += `\n  - "${card.title}" (ID: ${card.id}${card.description ? `, Description: ${card.description}` : ''}${card.dueDate ? `, Due: ${card.dueDate}` : ''})`;
+      });
+    } else {
+      context += `\n  - No cards`;
+    }
+  });
+
+  context += `\n\nYou can help with tasks like analyzing the board, suggesting improvements, answering questions about cards or lists, and providing insights about the project status.`;
+  
+  return context;
+}
+
 console.log('🤖 API routes loaded');
 
 // Apply auth to all API routes
@@ -19,7 +57,7 @@ router.post('/chat', async (req, res) => {
   console.log('💬 Chat request from user:', req.user?.id);
   
   try {
-    const { messages } = req.body;
+    const { messages, boardContext } = req.body;
 
     // Validate request
     if (!messages || !Array.isArray(messages)) {
@@ -50,11 +88,21 @@ router.post('/chat', async (req, res) => {
       });
     }
 
+    // Prepare messages with board context if provided
+    let finalMessages = [...messages];
+    if (boardContext) {
+      const contextMessage = {
+        role: 'system',
+        content: formatBoardContext(boardContext)
+      };
+      finalMessages = [contextMessage, ...messages];
+    }
+
     // Call OpenAI API
-    console.log('🔄 Calling OpenAI API with', messages.length, 'messages');
+    console.log('🔄 Calling OpenAI API with', finalMessages.length, 'messages' + (boardContext ? ' (including board context)' : ''));
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: messages,
+      messages: finalMessages,
       max_tokens: 500,
       temperature: 0.7,
     });
@@ -101,6 +149,7 @@ router.get('/chat/stream', async (req, res) => {
   
   try {
     const messagesParam = req.query.messages as string;
+    const boardContextParam = req.query.boardContext as string;
     
     // Validate request
     if (!messagesParam) {
@@ -110,11 +159,16 @@ router.get('/chat/stream', async (req, res) => {
     }
 
     let messages;
+    let boardContext = null;
+    
     try {
       messages = JSON.parse(messagesParam);
+      if (boardContextParam) {
+        boardContext = JSON.parse(boardContextParam);
+      }
     } catch (error) {
       return res.status(400).json({
-        error: 'Invalid messages format'
+        error: 'Invalid messages or board context format'
       });
     }
 
@@ -155,13 +209,23 @@ router.get('/chat/stream', async (req, res) => {
       'Access-Control-Allow-Headers': 'Cache-Control'
     });
 
-    console.log('🔄 Starting OpenAI streaming with', messages.length, 'messages');
+    // Prepare messages with board context if provided
+    let finalMessages = [...messages];
+    if (boardContext) {
+      const contextMessage = {
+        role: 'system',
+        content: formatBoardContext(boardContext)
+      };
+      finalMessages = [contextMessage, ...messages];
+    }
+
+    console.log('🔄 Starting OpenAI streaming with', finalMessages.length, 'messages' + (boardContext ? ' (including board context)' : ''));
 
     try {
       // Call OpenAI API with streaming enabled
       const stream = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
-        messages: messages,
+        messages: finalMessages,
         max_tokens: 500,
         temperature: 0.7,
         stream: true

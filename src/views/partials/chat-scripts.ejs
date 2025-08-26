@@ -1,6 +1,7 @@
 <script>
 // Chat functionality
 let chatMessages = [];
+let boardContext = null;
 
 function handleChatKeyDown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -30,6 +31,21 @@ function focusChatInput() {
     }
 }
 
+function setBoardContext() {
+    const chatModal = document.getElementById('chatModal');
+    const boardContextData = chatModal?.getAttribute('data-board-context');
+    
+    if (boardContextData) {
+        try {
+            boardContext = JSON.parse(boardContextData);
+            console.log('Board context loaded:', boardContext);
+        } catch (error) {
+            console.error('Failed to parse board context:', error);
+            boardContext = null;
+        }
+    }
+}
+
 // Add event listener for when the modal opens
 document.addEventListener('DOMContentLoaded', function() {
     const chatModal = document.getElementById('chatModal');
@@ -39,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
                     if (chatModal.open) {
+                        // Set board context when modal opens
+                        setBoardContext();
                         // Small delay to ensure modal is fully rendered
                         setTimeout(focusChatInput, 100);
                     }
@@ -163,9 +181,12 @@ function sendChatMessageStreaming() {
         const streamingMessageId = 'streaming-message-' + Date.now();
         addStreamingMessageToUI(streamingMessageId);
         
-        // Build SSE URL with messages as query parameter
+        // Build SSE URL with messages and board context as query parameters
         const messagesParam = encodeURIComponent(JSON.stringify(chatMessages));
-        const eventSource = new EventSource(`/api/chat/stream?messages=${messagesParam}`);
+        const boardContextParam = boardContext ? encodeURIComponent(JSON.stringify(boardContext)) : '';
+        
+        const url = `/api/chat/stream?messages=${messagesParam}${boardContextParam ? `&boardContext=${boardContextParam}` : ''}`;
+        const eventSource = new EventSource(url);
         
         let streamedContent = '';
         let hasError = false;
@@ -228,12 +249,17 @@ function sendChatMessageStreaming() {
 
 function sendChatMessageRegular() {
     // Send to API using original method
+    const requestBody = { messages: chatMessages };
+    if (boardContext) {
+        requestBody.boardContext = boardContext;
+    }
+    
     fetch('/api/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: chatMessages })
+        body: JSON.stringify(requestBody)
     })
     .then(response => {
         if (!response.ok) {
