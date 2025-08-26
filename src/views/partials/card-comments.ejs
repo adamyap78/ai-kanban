@@ -1,6 +1,14 @@
 <!-- Card Comments Section -->
 <div class="space-y-4">
-    <h3 class="text-lg font-semibold">Comments</h3>
+    <!-- Section Header -->
+    <div class="flex items-center justify-between">
+        <label class="label">
+            <span class="label-text font-medium">Activity & Comments</span>
+        </label>
+        <% if (comments && comments.length > 0) { %>
+            <span class="text-xs text-gray-500"><%= comments.length %></span>
+        <% } %>
+    </div>
     
     <!-- Add Comment Form -->
     <form hx-post="/cards/<%= cardId %>/comments"
@@ -8,27 +16,22 @@
           hx-swap="afterbegin"
           hx-on::after-request="this.reset()"
           class="space-y-3">
-        <div class="form-control">
-            <textarea name="content" 
-                      class="textarea textarea-bordered w-full h-20" 
-                      placeholder="Write a comment..."
-                      required
-                      maxlength="2000"></textarea>
+        <textarea name="content" 
+                  class="textarea textarea-bordered w-full h-20 text-sm" 
+                  placeholder="Write a comment..."
+                  required
+                  maxlength="2000"></textarea>
+        <div class="flex justify-end">
+            <button type="submit" class="btn btn-primary btn-sm">Add Comment</button>
         </div>
-        <button type="submit" 
-                class="btn btn-primary btn-sm">
-            Add Comment
-        </button>
     </form>
     
     <!-- Comments List -->
-    <div id="comments-list" class="space-y-3">
+    <div id="comments-list" class="space-y-3" style="max-height: 300px; overflow-y: auto;">
         <% if (comments && comments.length > 0) { %>
             <% comments.forEach(comment => { %>
                 <%- include('comment-item', { comment }) %>
             <% }) %>
-        <% } else { %>
-            <p class="text-gray-500 text-sm italic">No comments yet. Be the first to comment!</p>
         <% } %>
     </div>
 </div>
