@@ -1,5 +1,5 @@
 <!-- Unified Card Form Modal Content -->
-<div class="space-y-4" onkeydown="if(event.key==='Escape') { document.getElementById('cardDetailModal').close(); }">
+<div class="space-y-6" onkeydown="if(event.key==='Escape') { document.getElementById('cardDetailModal').close(); }">
     <!-- Close button only -->
     <div class="flex justify-end">
         <button onclick="document.getElementById('cardDetailModal').close()" class="btn btn-ghost btn-sm btn-circle">
@@ -74,4 +74,19 @@
     
     <!-- Hidden div for htmx responses -->
     <div id="htmx-response" style="display: none;"></div>
+    
+    <!-- Comments Section (only show for existing cards) -->
+    <% if (card?.id) { %>
+        <hr class="my-6">
+        <div id="card-comments-section" 
+             hx-get="/cards/<%= card.id %>/comments"
+             hx-trigger="load"
+             hx-swap="innerHTML">
+            <!-- Comments will load here -->
+            <div class="text-center py-4">
+                <div class="loading loading-spinner loading-sm"></div>
+                <span class="text-sm text-gray-500 ml-2">Loading comments...</span>
+            </div>
+        </div>
+    <% } %>
 </div>

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { flashMessages } from '../middleware/validation';
 import { cardService } from '../services/card.service';
+import { commentService } from '../services/comment.service';
 import { z } from 'zod';
 
 const router = Router();
@@ -34,6 +35,14 @@ const updateCardSchema = z.object({
 const moveCardSchema = z.object({
   listId: z.string().min(1, 'List ID is required'),
   position: z.number().min(0, 'Position must be positive'),
+});
+
+const createCommentSchema = z.object({
+  content: z.string().min(1, 'Comment content is required').max(2000, 'Comment too long'),
+});
+
+const updateCommentSchema = z.object({
+  content: z.string().min(1, 'Comment content is required').max(2000, 'Comment too long'),
 });
 
 // Create new card
@@ -217,6 +226,148 @@ router.delete('/cards/:cardId', requireAuth, async (req, res) => {
     if (req.headers['content-type']?.includes('application/json')) {
       return res.status(400).json({ error: errorMessage });
     } else {
+      return res.redirect('/dashboard');
+    }
+  }
+});
+
+// Get comments for a card
+router.get('/cards/:cardId/comments', requireAuth, async (req, res) => {
+  try {
+    const cardId = req.params.cardId;
+    if (!cardId) {
+      return res.status(400).json({ error: 'Card ID is required' });
+    }
+    
+    const comments = await commentService.getByCardId(cardId, req.user!.id);
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.json({ comments });
+    } else {
+      // For HTMX, return comments partial
+      return res.render('partials/card-comments', { 
+        comments, 
+        cardId,
+        layout: false
+      });
+    }
+  } catch (error) {
+    console.error('❌ Error getting comments:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to get comments';
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(400).json({ error: errorMessage });
+    } else {
+      return res.status(400).send(errorMessage);
+    }
+  }
+});
+
+// Create comment for a card
+router.post('/cards/:cardId/comments', requireAuth, async (req, res) => {
+  try {
+    const cardId = req.params.cardId;
+    if (!cardId) {
+      return res.status(400).json({ error: 'Card ID is required' });
+    }
+    
+    const validatedData = createCommentSchema.parse(req.body);
+    
+    const comment = await commentService.create({
+      cardId,
+      userId: req.user!.id,
+      content: validatedData.content,
+    });
+
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.json({ success: true, comment });
+    } else if (req.headers['hx-request']) {
+      // Return new comment partial
+      return res.render('partials/comment-item', { 
+        comment, 
+        layout: false
+      });
+    } else {
+      req.flash('success', 'Comment added successfully!');
+      return res.redirect('/dashboard');
+    }
+  } catch (error) {
+    console.error('❌ Error creating comment:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create comment';
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(400).json({ error: errorMessage });
+    } else {
+      req.flash('error', errorMessage);
+      return res.redirect('/dashboard');
+    }
+  }
+});
+
+// Update comment
+router.put('/cards/:cardId/comments/:commentId', requireAuth, async (req, res) => {
+  try {
+    const { cardId, commentId } = req.params;
+    if (!cardId || !commentId) {
+      return res.status(400).json({ error: 'Card ID and Comment ID are required' });
+    }
+    
+    const validatedData = updateCommentSchema.parse(req.body);
+    
+    const comment = await commentService.update(commentId, req.user!.id, validatedData.content);
+
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.json({ success: true, comment });
+    } else if (req.headers['hx-request']) {
+      // Return updated comment partial
+      return res.render('partials/comment-item', { 
+        comment, 
+        layout: false
+      });
+    } else {
+      req.flash('success', 'Comment updated successfully!');
+      return res.redirect('/dashboard');
+    }
+  } catch (error) {
+    console.error('❌ Error updating comment:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update comment';
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(400).json({ error: errorMessage });
+    } else {
+      req.flash('error', errorMessage);
+      return res.redirect('/dashboard');
+    }
+  }
+});
+
+// Delete comment
+router.delete('/cards/:cardId/comments/:commentId', requireAuth, async (req, res) => {
+  try {
+    const { cardId, commentId } = req.params;
+    if (!cardId || !commentId) {
+      return res.status(400).json({ error: 'Card ID and Comment ID are required' });
+    }
+    
+    await commentService.delete(commentId, req.user!.id);
+
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.json({ success: true });
+    } else if (req.headers['hx-request']) {
+      // Return empty response - comment will be removed from DOM
+      return res.status(200).send('');
+    } else {
+      req.flash('success', 'Comment deleted successfully!');
+      return res.redirect('/dashboard');
+    }
+  } catch (error) {
+    console.error('❌ Error deleting comment:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to delete comment';
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(400).json({ error: errorMessage });
+    } else {
+      req.flash('error', errorMessage);
       return res.redirect('/dashboard');
     }
   }
