@@ -11,9 +11,9 @@
      ondragend="handleDragEnd(event)"
      ondragover="event.preventDefault()">
     <div class="card-body p-4">
-        <h4 class="card-title text-base font-medium text-base-content"><%= card.title %></h4>
+        <h4 class="card-title text-sm font-medium text-base-content"><%= card.title %></h4>
         <% if (card.description) { %>
-            <p class="text-sm text-base-content/70 line-clamp-3"><%= card.description %></p>
+            <p class="text-xs text-base-content/70 line-clamp-3"><%= card.description %></p>
         <% } %>
         
         <div class="flex justify-between items-center mt-3">
