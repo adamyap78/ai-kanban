@@ -23,6 +23,33 @@ function adjustTextareaHeight(textarea) {
     sendButton.disabled = !hasContent;
 }
 
+function focusChatInput() {
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.focus();
+    }
+}
+
+// Add event listener for when the modal opens
+document.addEventListener('DOMContentLoaded', function() {
+    const chatModal = document.getElementById('chatModal');
+    if (chatModal) {
+        // Use MutationObserver to detect when modal opens
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
+                    if (chatModal.open) {
+                        // Small delay to ensure modal is fully rendered
+                        setTimeout(focusChatInput, 100);
+                    }
+                }
+            });
+        });
+        
+        observer.observe(chatModal, { attributes: true });
+    }
+});
+
 
 function showThinkingIndicator() {
     const thinkingElement = document.getElementById('chatThinking');
