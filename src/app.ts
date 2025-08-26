@@ -60,6 +60,7 @@ import boardRoutes from './routes/boards';
 import listRoutes from './routes/lists';
 import cardRoutes from './routes/cards';
 import apiRoutes from './routes/api';
+import agentRoutes from './routes/agent';
 import { extractUser } from './middleware/auth';
 import { validateReferer } from './middleware/validation';
 
@@ -83,6 +84,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api', apiRoutes);
+app.use('/agent', agentRoutes); // AI Agent API routes
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/orgs', organizationRoutes);
