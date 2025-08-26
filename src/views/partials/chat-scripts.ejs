@@ -345,19 +345,7 @@ function addMessageToUI(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat ${role === 'user' ? 'chat-end' : 'chat-start'}`;
     
-    // Create avatar for assistant messages
     if (role === 'assistant') {
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'chat-image avatar';
-        avatarDiv.innerHTML = `
-            <div class="w-8 h-8 rounded-full">
-                <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                    <span class="text-xs">AI</span>
-                </div>
-            </div>
-        `;
-        messageDiv.appendChild(avatarDiv);
-        
         // Add header with timestamp
         const headerDiv = document.createElement('div');
         headerDiv.className = 'chat-header text-xs opacity-50 mb-1';
@@ -396,17 +384,6 @@ function addStreamingMessageToUI(messageId) {
     messageDiv.id = messageId;
     messageDiv.className = 'chat chat-start';
     
-    // Create avatar
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'chat-image avatar';
-    avatarDiv.innerHTML = `
-        <div class="w-8 h-8 rounded-full">
-            <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                <span class="text-xs">AI</span>
-            </div>
-        </div>
-    `;
-    messageDiv.appendChild(avatarDiv);
     
     // Add header
     const headerDiv = document.createElement('div');
