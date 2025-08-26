@@ -155,6 +155,8 @@ function formatBoardContext(boardContext: any): string {
   
   let context = `You are an AI assistant helping with a Kanban board. Here's the current state of the Kanban board. This state may change, depending on the actions you perform.
 
+When creating cards, if you are given discretion in naming the card, start the title of the card with an appropriate emoji.
+
 BOARD INFORMATION:
 - Board: ${board.name} (ID: ${board.id})
 - Description: ${board.description || 'No description'}
