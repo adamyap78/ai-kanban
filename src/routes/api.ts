@@ -36,6 +36,31 @@ const tools = [
         required: ["title", "listId"]
       }
     }
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "move_card",
+      description: "Move a card from one list to another",
+      parameters: {
+        type: "object",
+        properties: {
+          cardId: { 
+            type: "string", 
+            description: "ID of the card to move" 
+          },
+          listId: { 
+            type: "string", 
+            description: "ID of the destination list" 
+          },
+          position: { 
+            type: "number", 
+            description: "Optional position in the destination list (defaults to end)" 
+          }
+        },
+        required: ["cardId", "listId"]
+      }
+    }
   }
 ];
 
@@ -53,6 +78,11 @@ async function executeToolCall(toolCall: any) {
     switch (name) {
       case 'create_card':
         return await agentTools.createCard(parsedArgs);
+      case 'move_card':
+        return await agentTools.moveCard(parsedArgs.cardId, {
+          listId: parsedArgs.listId,
+          position: parsedArgs.position,
+        });
       default:
         return { success: false, error: `Unknown tool: ${name}` };
     }
