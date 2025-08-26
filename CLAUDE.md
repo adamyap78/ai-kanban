@@ -60,6 +60,7 @@ src/
 ## Current Status
 **Phase 2 COMPLETED**: Full Kanban board functionality with lists and cards
 **Phase 2.5 COMPLETED**: Modal system redesign with direct-edit pattern
+**AI Chatbot Phase 1 & 1.5 COMPLETED**: Streaming AI chatbot with rich markdown support
 
 ### Recent Updates
 - ✅ Complete Kanban board interface with working lists and cards
@@ -68,6 +69,9 @@ src/
 - ✅ Simplified HTMX patterns with OOB swaps
 - ✅ List management with inline editing
 - ✅ Fixed CSP configuration to allow inline event handlers
+- ✅ **AI Chatbot Phase 1**: Basic streaming chatbot with SSE support
+- ✅ **AI Chatbot Phase 1.5**: Enhanced UI, markdown support, improved UX
+- ✅ Drag-and-drop functionality for cards and lists
 - 🚀 Server running on http://localhost:3000
 
 ### Design Pattern Achievements
@@ -77,14 +81,28 @@ src/
 - ✅ **Simple HTMX**: Direct element targeting, no complex JavaScript state
 
 ## Missing Features (From Requirements)
-- Card management with drag-and-drop
-- List management within boards
 - Real-time collaboration
-- AI-powered features
+- **AI Phase 2**: Board context integration for AI chatbot
 - User permissions and roles
 - Comment system
 - File attachments
 - Activity feeds
+
+## Next Development Priorities
+1. **AI Chatbot Phase 2**: Board Context Integration
+   - Include current board data as AI context
+   - Context-aware suggestions and insights
+   - Board-specific AI assistance
+
+2. **Real-time Collaboration**
+   - Multi-user simultaneous editing
+   - Live updates via WebSocket or polling
+   - User presence indicators
+
+3. **User Management & Permissions**
+   - Organization roles and permissions
+   - User invitation system
+   - Access control for boards
 
 ## Git Repository
 - **Main branch**: `main`

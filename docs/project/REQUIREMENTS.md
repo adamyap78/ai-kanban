@@ -23,10 +23,10 @@ Users can belong to multiple Organizations with role-based permissions
 - **Templates:** Pre-configured board templates for common workflows
 - **Archives:** Soft-delete boards with restoration capability
 
-### 4. Kanban Functionality
-- **Lists:** Customizable workflow stages (To Do, In Progress, Done, etc.)
-- **Cards:** Tasks with title, description, due dates, labels, assignees
-- **Drag & Drop:** Reorder cards within lists and between lists
+### 4. Kanban Functionality ✅ CORE COMPLETED
+- ✅ **Lists:** Customizable workflow stages (To Do, In Progress, Done, etc.)
+- ✅ **Cards:** Tasks with title, description, due dates, labels, assignees
+- ✅ **Drag & Drop:** Reorder cards within lists and between lists
 - **Card Details:** Comments, attachments, checklists, activity history
 - **Labels:** Color-coded labels with custom names
 
@@ -303,6 +303,10 @@ eventSource.onmessage = function(event) {
 - ✅ Graceful fallback to regular POST requests on SSE failure
 - ✅ Enhanced loading states and error handling
 - ✅ 30-second timeout protection for streaming requests
+- ✅ Markdown support for rich text formatting in responses
+- ✅ Improved UI design with better chat bubble styling
+- ✅ Code organization and separation from main Kanban templates
+- ✅ Focus management and keyboard interaction improvements
 
 #### Phase 2 (v2): Board Context Integration 🔄 NEXT
 - Include board data (name, description, lists, cards) as AI context
