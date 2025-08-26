@@ -91,3 +91,4 @@ src/
 - **Status**: Clean working tree
 - **Recent progress**: Views converted to DaisyUI components
 - Don't add Emojis to interfaces in the app with being expressly told to
+- After building a feature or significant functionality, please update the requirements.md and todo list

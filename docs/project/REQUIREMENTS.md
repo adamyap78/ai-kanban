@@ -240,21 +240,71 @@ async function sendMessage(userMessage) {
 - Server can implement rate limiting and authentication checks
 - All requests authenticated through existing user session system
 
+#### 5. Streaming Architecture (Phase 1.5 Enhancement)
+**Server-Sent Events Implementation:**
+```javascript
+// Server endpoint: GET /api/chat/stream
+const stream = await openai.chat.completions.create({
+  model: 'gpt-4o-mini',
+  messages: messages,
+  stream: true // Enable OpenAI streaming
+});
+
+// Stream chunks to client via SSE
+for await (const chunk of stream) {
+  const delta = chunk.choices[0]?.delta;
+  if (delta?.content) {
+    res.write(`data: ${JSON.stringify({
+      type: 'content', 
+      content: delta.content
+    })}\n\n`);
+  }
+}
+```
+
+**Client-Side Progressive Display:**
+```javascript
+const eventSource = new EventSource(`/api/chat/stream?messages=${messagesParam}`);
+
+eventSource.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  if (data.type === 'content') {
+    streamedContent += data.content;
+    updateStreamingMessage(messageId, streamedContent);
+  }
+};
+```
+
+**Fallback Strategy:**
+- Primary: Server-Sent Events for real-time streaming
+- Fallback: Regular POST request if SSE fails
+- Automatic detection and graceful degradation
+- Same authentication and error handling for both methods
+
 ### Implementation Files
-1. **New API Route**: `src/routes/api.ts` (or extend existing routes)
-2. **UI Updates**: Modify `src/views/pages/boards/show.ejs` for chat interface
-3. **Client JavaScript**: Add chat functionality to board page script section
-4. **Environment**: Add `OPENAI_API_KEY` to `.env` configuration
+1. **API Routes**: `src/routes/api.ts` - Both `/chat` and `/chat/stream` endpoints
+2. **UI Updates**: `src/views/pages/boards/show.ejs` - Chat interface with streaming support
+3. **Client JavaScript**: Enhanced chat functionality with EventSource integration
+4. **Environment**: `OPENAI_API_KEY` in `.env` configuration
 
 ### Iterative Development Phases
 
-#### Phase 1 (v1): Basic Chatbot
-- Simple chat interface with no board context
-- Generic AI assistant responses
-- In-memory conversation history
-- Basic error handling and loading states
+#### Phase 1 (v1): Basic Chatbot ✅ COMPLETED
+- ✅ Simple chat interface with no board context
+- ✅ Generic AI assistant responses  
+- ✅ In-memory conversation history
+- ✅ Basic error handling and loading states
+- ✅ **ENHANCEMENT**: Real-time streaming responses with SSE
 
-#### Phase 2 (v2): Board Context Integration
+#### Phase 1.5 (v1.5): Streaming Implementation ✅ COMPLETED
+- ✅ Server-Sent Events (SSE) for real-time message streaming
+- ✅ Progressive character-by-character message display
+- ✅ Live typing cursor effect during streaming
+- ✅ Graceful fallback to regular POST requests on SSE failure
+- ✅ Enhanced loading states and error handling
+- ✅ 30-second timeout protection for streaming requests
+
+#### Phase 2 (v2): Board Context Integration 🔄 NEXT
 - Include board data (name, description, lists, cards) as AI context
 - AI responses aware of current board state
 - Context-aware suggestions and insights
