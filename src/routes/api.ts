@@ -95,4 +95,132 @@ router.post('/chat', async (req, res) => {
   }
 });
 
+// Chat streaming endpoint - Server-Sent Events
+router.get('/chat/stream', async (req, res) => {
+  console.log('🌊 Chat stream request from user:', req.user?.id);
+  
+  try {
+    const messagesParam = req.query.messages as string;
+    
+    // Validate request
+    if (!messagesParam) {
+      return res.status(400).json({
+        error: 'Messages parameter is required'
+      });
+    }
+
+    let messages;
+    try {
+      messages = JSON.parse(messagesParam);
+    } catch (error) {
+      return res.status(400).json({
+        error: 'Invalid messages format'
+      });
+    }
+
+    // Validate message format
+    if (!Array.isArray(messages)) {
+      return res.status(400).json({
+        error: 'Messages must be an array'
+      });
+    }
+
+    const isValidMessages = messages.every(msg => 
+      msg && 
+      typeof msg.role === 'string' && 
+      (msg.role === 'user' || msg.role === 'assistant') &&
+      typeof msg.content === 'string'
+    );
+
+    if (!isValidMessages) {
+      return res.status(400).json({
+        error: 'Invalid message format. Each message must have role (user|assistant) and content (string)'
+      });
+    }
+
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('❌ OpenAI API key not configured');
+      return res.status(500).json({
+        error: 'AI service not configured'
+      });
+    }
+
+    // Set up Server-Sent Events headers
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control'
+    });
+
+    console.log('🔄 Starting OpenAI streaming with', messages.length, 'messages');
+
+    try {
+      // Call OpenAI API with streaming enabled
+      const stream = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: messages,
+        max_tokens: 500,
+        temperature: 0.7,
+        stream: true
+      });
+
+      // Stream the response chunks
+      for await (const chunk of stream) {
+        const delta = chunk.choices[0]?.delta;
+        if (delta?.content) {
+          const eventData = {
+            type: 'content',
+            content: delta.content
+          };
+          res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+        }
+      }
+
+      // Send completion signal
+      const completeData = {
+        type: 'complete'
+      };
+      res.write(`data: ${JSON.stringify(completeData)}\n\n`);
+      
+      console.log('✅ OpenAI streaming completed');
+
+    } catch (streamError) {
+      console.error('❌ OpenAI streaming error:', streamError);
+      
+      // Send error through SSE
+      const errorData = {
+        type: 'error',
+        error: 'Failed to process streaming request'
+      };
+      res.write(`data: ${JSON.stringify(errorData)}\n\n`);
+    }
+
+    // Close the connection
+    res.end();
+    return;
+
+  } catch (error) {
+    console.error('❌ Chat stream error:', error);
+    
+    // If headers haven't been sent, send JSON error
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: 'Failed to process streaming request'
+      });
+    }
+    
+    // Otherwise send error through SSE and close
+    const errorData = {
+      type: 'error', 
+      error: 'Stream processing failed'
+    };
+    res.write(`data: ${JSON.stringify(errorData)}\n\n`);
+    res.end();
+    return;
+  }
+});
+
 export default router;

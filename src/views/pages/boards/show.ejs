@@ -722,10 +722,107 @@ function sendChatMessage() {
     // Add user message to conversation
     chatMessages.push({ role: 'user', content: message });
     
+    // Try streaming first, fallback to regular POST if it fails
+    sendChatMessageStreaming()
+        .catch(error => {
+            console.warn('Streaming failed, falling back to regular request:', error);
+            sendChatMessageRegular();
+        })
+        .finally(() => {
+            // Re-enable send button
+            sendButton.disabled = false;
+        });
+}
+
+function sendChatMessageStreaming() {
+    return new Promise((resolve, reject) => {
+        // Show typing indicator instead of loading dots
+        document.getElementById('chatLoading').classList.remove('hidden');
+        const loadingBubble = document.querySelector('#chatLoading .chat-bubble');
+        loadingBubble.innerHTML = '<span class="loading loading-dots loading-sm"></span> Thinking...';
+        
+        // Create streaming AI message container
+        const streamingMessageId = 'streaming-message-' + Date.now();
+        addStreamingMessageToUI(streamingMessageId);
+        
+        // Build SSE URL with messages as query parameter
+        const messagesParam = encodeURIComponent(JSON.stringify(chatMessages));
+        const eventSource = new EventSource(`/api/chat/stream?messages=${messagesParam}`);
+        
+        let streamedContent = '';
+        let hasError = false;
+        
+        eventSource.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'content') {
+                    streamedContent += data.content;
+                    updateStreamingMessage(streamingMessageId, streamedContent);
+                } else if (data.type === 'complete') {
+                    // Hide loading indicator
+                    document.getElementById('chatLoading').classList.add('hidden');
+                    
+                    // Finalize the streaming message (remove cursor)
+                    finalizeStreamingMessage(streamingMessageId);
+                    
+                    // Add completed message to conversation history
+                    chatMessages.push({ role: 'assistant', content: streamedContent });
+                    
+                    eventSource.close();
+                    resolve();
+                } else if (data.type === 'error') {
+                    hasError = true;
+                    // Hide loading indicator
+                    document.getElementById('chatLoading').classList.add('hidden');
+                    
+                    // Remove streaming message and show error
+                    removeStreamingMessage(streamingMessageId);
+                    addMessageToUI('assistant', 'Sorry, I encountered an error. Please try again.');
+                    
+                    eventSource.close();
+                    reject(new Error(data.error || 'Streaming error'));
+                }
+            } catch (parseError) {
+                console.error('Error parsing SSE data:', parseError);
+            }
+        };
+        
+        eventSource.onerror = function(event) {
+            console.error('SSE connection error:', event);
+            
+            // Hide loading indicator
+            document.getElementById('chatLoading').classList.add('hidden');
+            
+            if (!hasError) {
+                // Remove streaming message
+                removeStreamingMessage(streamingMessageId);
+            }
+            
+            eventSource.close();
+            reject(new Error('SSE connection failed'));
+        };
+        
+        // Set timeout for streaming requests
+        setTimeout(() => {
+            if (eventSource.readyState !== EventSource.CLOSED) {
+                eventSource.close();
+                if (!hasError) {
+                    removeStreamingMessage(streamingMessageId);
+                }
+                reject(new Error('Streaming timeout'));
+            }
+        }, 30000); // 30 second timeout
+    });
+}
+
+function sendChatMessageRegular() {
     // Show loading indicator
     document.getElementById('chatLoading').classList.remove('hidden');
+    const loadingBubble = document.querySelector('#chatLoading .chat-bubble');
+    loadingBubble.innerHTML = '<span class="loading loading-dots loading-sm"></span>';
     
-    // Send to API
+    // Send to API using original method
     fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -763,10 +860,6 @@ function sendChatMessage() {
         
         // Show error message
         addMessageToUI('assistant', 'Sorry, I encountered an error. Please try again.');
-    })
-    .finally(() => {
-        // Re-enable send button
-        sendButton.disabled = false;
     });
 }
 
@@ -785,5 +878,74 @@ function addMessageToUI(role, content) {
     
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function addStreamingMessageToUI(messageId) {
+    const messagesContainer = document.getElementById('chatMessages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.id = messageId;
+    messageDiv.className = 'chat chat-start';
+    
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'chat-bubble chat-bubble-primary';
+    bubbleDiv.textContent = ''; // Start empty
+    
+    // Add cursor effect
+    const cursorSpan = document.createElement('span');
+    cursorSpan.className = 'animate-pulse';
+    cursorSpan.textContent = '▋';
+    bubbleDiv.appendChild(cursorSpan);
+    
+    messageDiv.appendChild(bubbleDiv);
+    messagesContainer.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function updateStreamingMessage(messageId, content) {
+    const messageElement = document.getElementById(messageId);
+    if (!messageElement) return;
+    
+    const bubbleDiv = messageElement.querySelector('.chat-bubble');
+    if (!bubbleDiv) return;
+    
+    // Update content while preserving cursor
+    const cursorSpan = bubbleDiv.querySelector('.animate-pulse');
+    bubbleDiv.textContent = content;
+    
+    // Re-add cursor
+    if (cursorSpan) {
+        bubbleDiv.appendChild(cursorSpan);
+    }
+    
+    // Scroll to bottom
+    const messagesContainer = document.getElementById('chatMessages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function removeStreamingMessage(messageId) {
+    const messageElement = document.getElementById(messageId);
+    if (messageElement) {
+        messageElement.remove();
+    }
+}
+
+function finalizeStreamingMessage(messageId) {
+    const messageElement = document.getElementById(messageId);
+    if (!messageElement) return;
+    
+    const bubbleDiv = messageElement.querySelector('.chat-bubble');
+    if (!bubbleDiv) return;
+    
+    // Remove cursor and finalize message
+    const cursorSpan = bubbleDiv.querySelector('.animate-pulse');
+    if (cursorSpan) {
+        cursorSpan.remove();
+    }
+    
+    // Remove the ID so it becomes a regular message
+    messageElement.removeAttribute('id');
 }
 </script>
