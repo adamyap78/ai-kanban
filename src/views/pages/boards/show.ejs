@@ -77,34 +77,12 @@
     </form>
 </dialog>
 
-<!-- Board Context for Chat -->
+<!-- Chat Drawer Functions -->
 <script>
 function openChatDrawer() {
-    const chatDrawer = document.getElementById('chatDrawer');
     const chatDrawerToggle = document.getElementById('chatDrawerToggle');
-    const boardContextData = {
-        board: {
-            id: '<%= board.id %>',
-            name: '<%= board.name %>',
-            description: '<%= board.description || "" %>'
-        },
-        organization: {
-            id: '<%= organization.id %>',
-            name: '<%= organization.name %>',
-            slug: '<%= organization.slug %>'
-        },
-        lists: <%- JSON.stringify(lists) %>,
-        cards: <%- JSON.stringify(cardsByList) %>
-    };
     
-    // Set the board context directly in global scope (fixes race condition)
-    window.boardContext = boardContextData;
-    console.log('Board context set directly:', boardContextData);
-    
-    // Also set the board context on the drawer (for consistency)
-    chatDrawer.setAttribute('data-board-context', JSON.stringify(boardContextData));
-    
-    // Ensure setBoardContext() is called to set the chat script's boardContext variable
+    // Fetch fresh board context when opening chat
     if (typeof setBoardContext === 'function') {
         setBoardContext();
     }

@@ -2702,9 +2702,6 @@
   .h-32 {
     height: calc(var(--spacing) * 32);
   }
-  .h-\[85vh\] {
-    height: 85vh;
-  }
   .h-full {
     height: 100%;
   }
@@ -2746,9 +2743,6 @@
   }
   .w-11 {
     width: calc(var(--spacing) * 11);
-  }
-  .w-11\/12 {
-    width: calc(11/12 * 100%);
   }
   .w-52 {
     width: calc(var(--spacing) * 52);

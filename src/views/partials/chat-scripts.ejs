@@ -68,29 +68,27 @@ function focusChatInput() {
 }
 
 function setBoardContext() {
-    // First check if boardContext is already set globally (preferred method)
-    if (window.boardContext) {
-        boardContext = window.boardContext;
-        console.log('Board context loaded from global scope:', boardContext);
-        return;
-    }
+    console.log('🔄 Fetching fresh board context...');
     
-    // Fallback: try to read from DOM attribute (legacy method)
-    const chatDrawer = document.getElementById('chatDrawer');
-    const boardContextData = chatDrawer?.getAttribute('data-board-context');
-    
-    if (boardContextData) {
-        try {
-            boardContext = JSON.parse(boardContextData);
-            console.log('Board context loaded from DOM attribute:', boardContext);
-        } catch (error) {
-            console.error('Failed to parse board context from DOM:', error);
-            boardContext = null;
+    fetch(window.location.pathname, {
+        headers: { 
+            'Accept': 'application/json'
         }
-    } else {
-        console.warn('No board context found in global scope or DOM attribute');
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        boardContext = data;
+        console.log('✅ Fresh board context loaded:', boardContext);
+    })
+    .catch(error => {
+        console.error('❌ Failed to fetch board context:', error);
         boardContext = null;
-    }
+    });
 }
 
 // Add event listener for when the drawer opens

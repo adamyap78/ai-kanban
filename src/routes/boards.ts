@@ -135,6 +135,7 @@ router.get('/:orgSlug/boards/:boardId', async (req, res) => {
 
     // Check if this is an AJAX request for refresh
     const isAjaxRefresh = req.headers['x-requested-with'] === 'XMLHttpRequest';
+    const isContextRequest = req.headers['accept'] === 'application/json';
 
     if (isAjaxRefresh) {
       // Return just the board content for refresh
@@ -142,6 +143,24 @@ router.get('/:orgSlug/boards/:boardId', async (req, res) => {
         lists,
         cardsByList,
         layout: false
+      });
+    }
+
+    if (isContextRequest) {
+      // Return board context as JSON
+      return res.json({
+        board: {
+          id: board.id,
+          name: board.name,
+          description: board.description || ""
+        },
+        organization: {
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug
+        },
+        lists,
+        cards: cardsByList
       });
     }
 
