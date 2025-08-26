@@ -41,9 +41,9 @@ function refreshBoard() {
 
 function handleChatKeyDown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
-        // Only handle enter key if the chat modal is open
-        const chatModal = document.getElementById('chatModal');
-        if (chatModal && chatModal.open) {
+        // Only handle enter key if the chat drawer is open
+        const chatDrawerToggle = document.getElementById('chatDrawerToggle');
+        if (chatDrawerToggle && chatDrawerToggle.checked) {
             event.preventDefault();
             sendChatMessage();
         }
@@ -68,39 +68,44 @@ function focusChatInput() {
 }
 
 function setBoardContext() {
-    const chatModal = document.getElementById('chatModal');
-    const boardContextData = chatModal?.getAttribute('data-board-context');
+    // First check if boardContext is already set globally (preferred method)
+    if (window.boardContext) {
+        boardContext = window.boardContext;
+        console.log('Board context loaded from global scope:', boardContext);
+        return;
+    }
+    
+    // Fallback: try to read from DOM attribute (legacy method)
+    const chatDrawer = document.getElementById('chatDrawer');
+    const boardContextData = chatDrawer?.getAttribute('data-board-context');
     
     if (boardContextData) {
         try {
             boardContext = JSON.parse(boardContextData);
-            console.log('Board context loaded:', boardContext);
+            console.log('Board context loaded from DOM attribute:', boardContext);
         } catch (error) {
-            console.error('Failed to parse board context:', error);
+            console.error('Failed to parse board context from DOM:', error);
             boardContext = null;
         }
+    } else {
+        console.warn('No board context found in global scope or DOM attribute');
+        boardContext = null;
     }
 }
 
-// Add event listener for when the modal opens
+// Add event listener for when the drawer opens
 document.addEventListener('DOMContentLoaded', function() {
-    const chatModal = document.getElementById('chatModal');
-    if (chatModal) {
-        // Use MutationObserver to detect when modal opens
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
-                    if (chatModal.open) {
-                        // Set board context when modal opens
-                        setBoardContext();
-                        // Small delay to ensure modal is fully rendered
-                        setTimeout(focusChatInput, 100);
-                    }
-                }
-            });
+    const chatDrawerToggle = document.getElementById('chatDrawerToggle');
+    if (chatDrawerToggle) {
+        // Listen for drawer toggle changes
+        chatDrawerToggle.addEventListener('change', function() {
+            if (chatDrawerToggle.checked) {
+                // Set board context when drawer opens
+                setBoardContext();
+                // Small delay to ensure drawer is fully rendered
+                setTimeout(focusChatInput, 100);
+            }
         });
-        
-        observer.observe(chatModal, { attributes: true });
     }
 });
 

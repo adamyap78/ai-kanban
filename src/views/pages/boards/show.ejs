@@ -5,7 +5,7 @@
         </div>
         
         <div class="flex gap-2">
-            <button onclick="openChatModal()" class="btn btn-primary btn-sm">
+            <button onclick="openChatDrawer()" class="btn btn-primary btn-sm">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
                 </svg>
@@ -79,13 +79,14 @@
 
 <!-- Board Context for Chat -->
 <script>
-function openChatModal() {
-    const chatModal = document.getElementById('chatModal');
-    const boardContext = {
+function openChatDrawer() {
+    const chatDrawer = document.getElementById('chatDrawer');
+    const chatDrawerToggle = document.getElementById('chatDrawerToggle');
+    const boardContextData = {
         board: {
             id: '<%= board.id %>',
             name: '<%= board.name %>',
-            description: '<%= board.description || '' %>'
+            description: '<%= board.description || "" %>'
         },
         organization: {
             id: '<%= organization.id %>',
@@ -96,18 +97,32 @@ function openChatModal() {
         cards: <%- JSON.stringify(cardsByList) %>
     };
     
-    // Set the board context on the modal
-    chatModal.setAttribute('data-board-context', JSON.stringify(boardContext));
+    // Set the board context directly in global scope (fixes race condition)
+    window.boardContext = boardContextData;
+    console.log('Board context set directly:', boardContextData);
     
-    // Open the modal
-    chatModal.showModal();
+    // Also set the board context on the drawer (for consistency)
+    chatDrawer.setAttribute('data-board-context', JSON.stringify(boardContextData));
+    
+    // Ensure setBoardContext() is called to set the chat script's boardContext variable
+    if (typeof setBoardContext === 'function') {
+        setBoardContext();
+    }
+    
+    // Open the drawer
+    chatDrawerToggle.checked = true;
+}
+
+// Keep backward compatibility
+function openChatModal() {
+    openChatDrawer();
 }
 </script>
 
 <!-- Kanban JavaScript -->
 <%- include('../../partials/kanban-scripts') %>
 
-<!-- Chat Modal -->
+<!-- Chat Drawer -->
 <%- include('../../partials/chat-modal') %>
 
 <!-- Chat JavaScript -->
