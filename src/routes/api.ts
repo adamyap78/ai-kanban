@@ -61,6 +61,52 @@ const tools = [
         required: ["cardId", "listId"]
       }
     }
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_card",
+      description: "Update fields on an existing card",
+      parameters: {
+        type: "object",
+        properties: {
+          cardId: {
+            type: "string",
+            description: "ID of the card to update"
+          },
+          title: {
+            type: "string",
+            description: "New title for the card"
+          },
+          description: {
+            type: "string",
+            description: "New description for the card"
+          },
+          dueDate: {
+            type: ["string", "null"],
+            description: "ISO date string to set due date, or null to clear"
+          }
+        },
+        required: ["cardId"]
+      }
+    }
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "delete_card",
+      description: "Delete a card by ID",
+      parameters: {
+        type: "object",
+        properties: {
+          cardId: {
+            type: "string",
+            description: "ID of the card to delete"
+          }
+        },
+        required: ["cardId"]
+      }
+    }
   }
 ];
 
@@ -83,6 +129,14 @@ async function executeToolCall(toolCall: any) {
           listId: parsedArgs.listId,
           position: parsedArgs.position,
         });
+      case 'update_card':
+        return await agentTools.updateCard(parsedArgs.cardId, {
+          title: parsedArgs.title,
+          description: parsedArgs.description,
+          dueDate: parsedArgs.dueDate,
+        });
+      case 'delete_card':
+        return await agentTools.deleteCard(parsedArgs.cardId);
       default:
         return { success: false, error: `Unknown tool: ${name}` };
     }
