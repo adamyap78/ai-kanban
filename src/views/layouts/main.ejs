@@ -16,10 +16,32 @@
 <body>
     <header class="navbar bg-neutral text-neutral-content shadow-sm fixed top-0 left-0 right-0 z-50">
         <div class="navbar-start">
+
+<!-- Viable Kanban logo: header + three columns -->
+
+
             <% if (locals.user) { %>
-                <a href="/dashboard" class="btn btn-ghost text-xl font-bold">Viable Kanban</a>
+                <a href="/dashboard" class="btn btn-ghost text-xl font-bold">
+                    <svg width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="Viable Kanban logo" role="img">
+                        <rect x="6" y="6" width="68" height="68" rx="10" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="14" y="16" width="52" height="8" rx="4" fill="white"/>
+                        <rect x="14" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="34" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="54" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                      </svg>
+
+                    Viable Kanban</a>
             <% } else { %>
-                <a href="/" class="btn btn-ghost text-xl font-bold">Viable Kanban</a>
+                <a href="/" class="btn btn-ghost text-xl font-bold">
+                    <svg width="20" height="20" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="Viable Kanban logo" role="img">
+                        <rect x="6" y="6" width="68" height="68" rx="10" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="14" y="16" width="52" height="8" rx="4" fill="white"/>
+                        <rect x="14" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="34" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                        <rect x="54" y="28" width="12" height="38" rx="3" stroke="white" stroke-width="4" fill="none"/>
+                      </svg>
+
+                    Viable Kanban</a>
             <% } %>
         </div>
         <div class="navbar-end">
