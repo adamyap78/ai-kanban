@@ -91,7 +91,7 @@ export const validateReferer = (req: Request, res: Response, next: NextFunction)
     let requestOrigin = origin;
     
     // Handle null origin case (common with direct form submissions)
-    if (!requestOrigin && referer) {
+    if ((!requestOrigin || requestOrigin === 'null') && referer) {
       try {
         requestOrigin = new URL(referer).origin;
       } catch (e) {
@@ -105,7 +105,7 @@ export const validateReferer = (req: Request, res: Response, next: NextFunction)
     }
     
     // If still no origin, check if host matches expected domain
-    if (!requestOrigin) {
+    if (!requestOrigin || requestOrigin === 'null') {
       const expectedHost = process.env.DOMAIN ? new URL(process.env.DOMAIN).host : host;
       if (host === expectedHost) {
         console.log('✅ Same-site request detected via host header');
