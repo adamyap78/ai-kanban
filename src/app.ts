@@ -62,10 +62,9 @@ import cardRoutes from './routes/cards';
 import apiRoutes from './routes/api';
 import agentRoutes from './routes/agent';
 import { extractUser } from './middleware/auth';
-import { validateReferer } from './middleware/validation';
 
 // Security middleware
-app.use(validateReferer);
+// validateReferer removed - will be added during security hardening
 
 // Basic request logging
 app.use((req, res, next) => {
