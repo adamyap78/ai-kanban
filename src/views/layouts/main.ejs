@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="fantasy">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title || 'AI Kanban Board' %></title>
+    <title><%= title || 'Viable Kanban Board' %></title>
     
     <!-- Tailwind CSS + DaisyUI -->
     <link rel="stylesheet" href="/css/main.css">
@@ -17,15 +17,21 @@
     <header class="navbar bg-base-100 shadow-sm fixed top-0 left-0 right-0 z-50">
         <div class="navbar-start">
             <% if (locals.user) { %>
-                <a href="/dashboard" class="btn btn-ghost text-xl font-bold text-base-content">AI Kanban</a>
+                <a href="/dashboard" class="btn btn-ghost text-xl font-bold text-base-content">Viable Kanban</a>
             <% } else { %>
-                <a href="/" class="btn btn-ghost text-xl font-bold text-base-content">AI Kanban</a>
+                <a href="/" class="btn btn-ghost text-xl font-bold text-base-content">Viable Kanban</a>
             <% } %>
         </div>
         <div class="navbar-end">
             <% if (locals.user) { %>
                 <!-- Authenticated navigation -->
-                <span class="text-base-content mr-4">Hello, <%= locals.user.name %></span>
+                <div class="flex items-center gap-3 mr-4">
+                    <div class="avatar avatar-placeholder">
+                        <div class="bg-info w-8 rounded-full">
+                            <span class="text-xs"><%= locals.user.name.charAt(0).toUpperCase() %></span>
+                        </div>
+                    </div>
+                </div>
                 <form method="POST" action="/auth/logout" class="inline">
                     <button type="submit" class="btn btn-outline btn-sm">Sign Out</button>
                 </form>

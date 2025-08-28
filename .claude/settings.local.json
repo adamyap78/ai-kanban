@@ -5,7 +5,10 @@
       "Bash(npm run dev:*)",
       "Bash(git add:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

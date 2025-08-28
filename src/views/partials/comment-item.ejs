@@ -8,8 +8,10 @@
                      alt="<%= comment.user.name %>" 
                      class="w-6 h-6 rounded-full">
             <% } else { %>
-                <div class="w-6 h-6 rounded-full bg-primary text-primary-content text-xs font-medium flex items-center justify-center">
-                    <%= comment.user.name.charAt(0).toUpperCase() %>
+                <div class="avatar avatar-placeholder">
+                    <div class="bg-info w-6 rounded-full">
+                        <span class="text-xs"><%= comment.user.name.charAt(0).toUpperCase() %></span>
+                    </div>
                 </div>
             <% } %>
         </div>
