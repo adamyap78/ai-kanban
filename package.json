@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently \"nodemon src/server.ts\" \"npm run css:watch\"",
     "build": "npm run css:build && tsc",
+    "vercel-build": "npm run build && npm run db:push",
     "start": "node dist/server.js",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
