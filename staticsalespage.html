@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ViableKanban — Smart Kanban Project Manager</title>
+  <meta name="description" content="ViableKanban combines intuitive project management with AI-powered insights for fast-moving startups and product teams." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-neutral-950 text-neutral-200 antialiased font-sans" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, Apple Color Emoji, Segoe UI Emoji;">
+  <!-- Background accents -->
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-40 -left-32 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl"></div>
+    <div class="absolute top-1/2 -right-20 h-72 w-72 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/2 h-48 w-[42rem] -translate-x-1/2 bg-gradient-to-t from-white/5 to-transparent"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="flex items-center justify-between border-b border-white/10 py-4">
+        <a href="#" class="group inline-flex items-center gap-3">
+          <div class="grid h-8 w-8 place-content-center rounded-md bg-white text-neutral-900 ring-1 ring-black/10 transition duration-300 group-hover:scale-105">
+            <span class="text-[11px] font-semibold tracking-tight">VK</span>
+          </div>
+          <span class="text-sm font-medium tracking-tight text-neutral-200/90">ViableKanban</span>
+        </a>
+        <nav class="hidden items-center gap-8 md:flex">
+          <a href="#features" class="text-sm text-neutral-300 transition hover:text-white">Features</a>
+          <a href="#solution" class="text-sm text-neutral-300 transition hover:text-white">Why Us</a>
+          <a href="#benefits" class="text-sm text-neutral-300 transition hover:text-white">Benefits</a>
+          <a href="#pricing" class="text-sm text-neutral-300 transition hover:text-white">Pricing</a>
+          <a href="#demo" class="text-sm text-neutral-300 transition hover:text-white">Demo</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href="#" class="hidden rounded-md px-3 py-2 text-sm font-medium text-neutral-300 ring-1 ring-white/10 transition hover:text-white hover:ring-white/30 md:inline-flex">Sign in</a>
+          <a href="#cta" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-indigo-400 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 active:scale-[.99]">
+            <i data-lucide="rocket" class="h-4 w-4"></i>
+            Start Free Trial
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="grid items-center gap-12 py-16 md:py-20 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-neutral-300">
+            <i data-lucide="zap" class="h-3.5 w-3.5"></i>
+            Built for fast teams
+          </div>
+          <h1 class="text-4xl leading-tight tracking-tight text-white sm:text-5xl md:text-6xl font-semibold">
+            The Smart Kanban Board That Thinks Ahead
+          </h1>
+          <p class="mt-5 max-w-xl text-base leading-relaxed text-neutral-300">
+            Built for fast-paced startups and product teams who need more than just sticky notes. ViableKanban combines intuitive project management with AI-powered insights to keep your team moving fast.
+          </p>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#cta" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-indigo-400 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 active:scale-[.99]">
+              <i data-lucide="play" class="h-4 w-4"></i>
+              Start Free Trial
+            </a>
+            <a href="#demo" class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/5 hover:ring-white/20 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/30">
+              <i data-lucide="monitor-play" class="h-4 w-4"></i>
+              Watch Demo
+            </a>
+          </div>
+
+          <div class="mt-5 flex items-center gap-4 text-sm text-neutral-400">
+            <div class="inline-flex items-center gap-2">
+              <i data-lucide="badge-check" class="h-4 w-4 text-emerald-400"></i>
+              No credit card required
+            </div>
+            <div class="inline-flex items-center gap-2">
+              <i data-lucide="calendar" class="h-4 w-4 text-emerald-400"></i>
+              14-day free trial
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Visual: Smart Kanban Preview -->
+        <div class="relative">
+          <div class="relative rounded-xl border border-white/10 bg-white/5 p-3 shadow-2xl shadow-black/50 ring-1 ring-white/10">
+            <!-- Window Header -->
+            <div class="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div class="flex items-center gap-1.5">
+                <span class="h-2.5 w-2.5 rounded-full bg-red-400/80"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-amber-400/80"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-400/80"></span>
+              </div>
+              <div class="text-xs font-medium text-neutral-300">ViableKanban — Sprint 24</div>
+              <div class="flex -space-x-2">
+                <img class="h-6 w-6 rounded-full ring-1 ring-white/20" alt="avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" />
+                <img class="h-6 w-6 rounded-full ring-1 ring-white/20" alt="avatar" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=80&auto=format&fit=crop" />
+                <img class="h-6 w-6 rounded-full ring-1 ring-white/20" alt="avatar" src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=80&auto=format&fit=crop" />
+              </div>
+            </div>
+
+            <!-- Board -->
+            <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+              <!-- Column -->
+              <div class="rounded-lg border border-white/10 bg-black/30">
+                <div class="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                  <div class="inline-flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-rose-400"></span>
+                    <h3 class="text-sm font-semibold tracking-tight text-white">Backlog</h3>
+                  </div>
+                  <button class="inline-flex items-center rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-300 ring-1 ring-white/10 transition hover:bg-white/10">+ Add</button>
+                </div>
+                <div class="p-2">
+                  <div class="group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">Auth: SSO support</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-142</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-amber-400/10 px-1.5 py-0.5 text-[10px] text-amber-300 ring-1 ring-amber-300/20">High</span>
+                    </div>
+                  </div>
+                  <div class="mt-2 group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">Mobile drag & drop</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-133</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-indigo-400/10 px-1.5 py-0.5 text-[10px] text-indigo-300 ring-1 ring-indigo-300/20">Medium</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column -->
+              <div class="rounded-lg border border-white/10 bg-black/30">
+                <div class="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                  <div class="inline-flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-indigo-400"></span>
+                    <h3 class="text-sm font-semibold tracking-tight text-white">In Progress</h3>
+                  </div>
+                  <button class="inline-flex items-center rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-300 ring-1 ring-white/10 transition hover:bg-white/10">+ Add</button>
+                </div>
+                <div class="p-2">
+                  <div class="group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">Realtime presence</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-128</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-emerald-400/10 px-1.5 py-0.5 text-[10px] text-emerald-300 ring-1 ring-emerald-300/20">Low</span>
+                    </div>
+                  </div>
+                  <div class="mt-2 group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">AI assistant hints</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-121</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-amber-400/10 px-1.5 py-0.5 text-[10px] text-amber-300 ring-1 ring-amber-300/20">High</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column -->
+              <div class="rounded-lg border border-white/10 bg-black/30">
+                <div class="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                  <div class="inline-flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                    <h3 class="text-sm font-semibold tracking-tight text-white">Review</h3>
+                  </div>
+                  <button class="inline-flex items-center rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-300 ring-1 ring-white/10 transition hover:bg-white/10">+ Add</button>
+                </div>
+                <div class="p-2">
+                  <div class="group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">API rate-limit policy</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-119</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-indigo-400/10 px-1.5 py-0.5 text-[10px] text-indigo-300 ring-1 ring-indigo-300/20">Medium</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column -->
+              <div class="rounded-lg border border-white/10 bg-black/30">
+                <div class="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                  <div class="inline-flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                    <h3 class="text-sm font-semibold tracking-tight text-white">Done</h3>
+                  </div>
+                  <button class="inline-flex items-center rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-300 ring-1 ring-white/10 transition hover:bg-white/10">+ Add</button>
+                </div>
+                <div class="p-2">
+                  <div class="group rounded-md border border-white/10 bg-white/5 p-2 transition hover:bg-white/10">
+                    <p class="text-xs font-medium text-neutral-200">Board keyboard shortcuts</p>
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-[10px] text-neutral-400">#VK-106</span>
+                      <span class="inline-flex items-center gap-1 rounded-sm bg-emerald-400/10 px-1.5 py-0.5 text-[10px] text-emerald-300 ring-1 ring-emerald-300/20">Low</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Insight Panel -->
+            <div class="mt-3 rounded-lg border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-3">
+              <div class="flex items-start gap-3">
+                <div class="grid h-8 w-8 place-content-center rounded-md bg-indigo-500/20 ring-1 ring-indigo-400/30">
+                  <i data-lucide="bot" class="h-4 w-4 text-indigo-300"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-white">AI Assistant</p>
+                  <p class="mt-1 text-xs text-neutral-300">
+                    Two high-priority tasks have been in “In Progress” for 5+ days. Consider splitting “AI assistant hints” into subtasks to reduce cycle time.
+                  </p>
+                </div>
+                <button class="rounded-md px-2 py-1 text-xs text-indigo-300 ring-1 ring-indigo-400/30 transition hover:bg-indigo-400/10">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtle floating badge -->
+          <div class="absolute -right-2 -top-3 hidden rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300 ring-1 ring-emerald-400/20 md:block">
+            <div class="inline-flex items-center gap-1">
+              <i data-lucide="activity" class="h-3.5 w-3.5"></i>
+              Real-time sync
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Built for Speed, Powered by Intelligence</h2>
+        <p class="mt-3 text-base text-neutral-300">Everything you need to manage projects efficiently, plus AI features that help you stay ahead of blockers and deadlines.</p>
+      </div>
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="group rounded-xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/20">
+          <div class="mb-4 grid h-10 w-10 place-content-center rounded-md bg-white/10 ring-1 ring-white/15">
+            <i data-lucide="mouse-pointer-click" class="h-5 w-5 text-white"></i>
+          </div>
+          <h3 class="text-lg font-semibold tracking-tight text-white">One-Click Everything</h3>
+          <p class="mt-2 text-sm text-neutral-300">Create cards, edit details, move tasks – all with immediate feedback. No waiting, no page reloads, no friction.</p>
+        </div>
+
+        <div class="group rounded-xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/20">
+          <div class="mb-4 grid h-10 w-10 place-content-center rounded-md bg-indigo-500/15 ring-1 ring-indigo-400/30">
+            <i data-lucide="bot" class="h-5 w-5 text-indigo-300"></i>
+          </div>
+          <h3 class="text-lg font-semibold tracking-tight text-white">AI Assistant</h3>
+          <p class="mt-2 text-sm text-neutral-300">Get smart suggestions, identify bottlenecks, and receive context-aware insights. Like having a PM coach built-in.</p>
+        </div>
+
+        <div class="group rounded-xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/20">
+          <div class="mb-4 grid h-10 w-10 place-content-center rounded-md bg-emerald-500/15 ring-1 ring-emerald-400/30">
+            <i data-lucide="users" class="h-5 w-5 text-emerald-300"></i>
+          </div>
+          <h3 class="text-lg font-semibold-tight text-white">Real-Time Collaboration</h3>
+          <p class="mt-2 text-sm text-neutral-300">Your entire team stays in sync. See changes instantly, no matter who's making them.</p>
+        </div>
+
+        <div class="group rounded-xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/20">
+          <div class="mb-4 grid h-10 w-10 place-content-center rounded-md bg-fuchsia-500/15 ring-1 ring-fuchsia-400/30">
+            <i data-lucide="building-2" class="h-5 w-5 text-fuchsia-300"></i>
+          </div>
+          <h3 class="text-lg font-semibold tracking-tight text-white">Multi-Tenant Ready</h3>
+          <p class="mt-2 text-sm text-neutral-300">Perfect for agencies and consultancies managing multiple client projects with proper access controls.</p>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Problem / Solution -->
+  <section id="solution" class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-xl border border-rose-400/20 bg-rose-500/5 p-6 ring-1 ring-rose-400/10">
+          <div class="inline-flex items-center gap-2 rounded-md bg-rose-400/10 px-2 py-1 text-xs text-rose-300 ring-1 ring-rose-400/20">
+            <i data-lucide="alert-triangle" class="h-3.5 w-3.5"></i>
+            The Problem
+          </div>
+          <p class="mt-3 text-base text-neutral-200">
+            Most project management tools are either too simple (just digital sticky notes) or too complex (enterprise monsters that slow you down). Fast-moving teams need something in between.
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-emerald-400/20 bg-emerald-500/5 p-6 ring-1 ring-emerald-400/10">
+          <div class="inline-flex items-center gap-2 rounded-md bg-emerald-400/10 px-2 py-1 text-xs text-emerald-300 ring-1 ring-emerald-400/20">
+            <i data-lucide="lightbulb" class="h-3.5 w-3.5"></i>
+            The Solution
+          </div>
+          <p class="mt-3 text-base text-neutral-200">
+            ViableKanban gives you the simplicity of a kanban board with the intelligence of AI. Make decisions faster, catch issues earlier, and keep your team aligned without the overhead.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section id="benefits" class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Benefits That Compound</h2>
+      </div>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-3">
+        <div class="rounded-xl border border-white/10 bg-white/5 p-6 ring-1 ring-white/10">
+          <div class="flex items-center gap-2 text-sm text-neutral-300">
+            <i data-lucide="target" class="h-4 w-4 text-indigo-300"></i>
+            For Product Managers
+          </div>
+          <ul class="mt-4 space-y-3 text-sm text-neutral-300">
+            <li class="flex items-start gap-2">
+              <i data-lucide="scan-line" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Spot patterns in your team's workflow</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="shield-alert" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Get AI insights on potential blockers</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="send" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Keep stakeholders updated with automated summaries</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-white/5 p-6 ring-1 ring-white/10">
+          <div class="flex items-center gap-2 text-sm text-neutral-300">
+            <i data-lucide="clipboard-list" class="h-4 w-4 text-indigo-300"></i>
+            For Project Managers
+          </div>
+          <ul class="mt-4 space-y-3 text-sm text-neutral-300">
+            <li class="flex items-start gap-2">
+              <i data-lucide="layout-grid" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Track progress across multiple boards</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="hourglass" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Identify bottlenecks before they become critical</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="handshake" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Streamline handoffs with clear task ownership</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-white/5 p-6 ring-1 ring-white/10">
+          <div class="flex items-center gap-2 text-sm text-neutral-300">
+            <i data-lucide="rocket" class="h-4 w-4 text-indigo-300"></i>
+            For Startup Teams
+          </div>
+          <ul class="mt-4 space-y-3 text-sm text-neutral-300">
+            <li class="flex items-start gap-2">
+              <i data-lucide="ratio" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Scale your process as you grow</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="video-off" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Reduce meeting overhead with better visibility</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="ship" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+              <span>Ship faster with fewer surprises</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Social Proof (placeholder space) -->
+  <section class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-12 md:py-16">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-medium tracking-tight text-neutral-300">Trusted by fast-moving product teams</p>
+      </div>
+      <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">ALPHA</div>
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">NOVA</div>
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">PIVOT</div>
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">LUMEN</div>
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">STACK</div>
+        <div class="grid h-14 place-content-center rounded-md border border-white/10 bg-white/5 text-[11px] font-semibold tracking-tight text-neutral-300 ring-1 ring-white/10">ATLAS</div>
+      </div>
+      <p class="mt-4 text-center text-xs text-neutral-400">Space reserved for testimonials/logos</p>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Pricing Teaser -->
+  <section id="pricing" class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="grid items-stretch gap-6 lg:grid-cols-2">
+        <div class="rounded-xl border border-white/10 bg-white/5 p-6 ring-1 ring-white/10">
+          <h3 class="text-2xl font-semibold tracking-tight text-white">Simple, transparent pricing that grows with you</h3>
+          <p class="mt-3 text-sm text-neutral-300">Start free, upgrade when you need more power. No hidden fees, no per-user nonsense for small teams.</p>
+          <div class="mt-5 flex flex-wrap items-center gap-3">
+            <a href="#cta" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-indigo-400 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 active:scale-[.99]">
+              <i data-lucide="credit-card" class="h-4 w-4"></i>
+              Start Free
+            </a>
+            <a href="#cta" class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/5 hover:ring-white/20">
+              <i data-lucide="list-checks" class="h-4 w-4"></i>
+              See Plans
+            </a>
+          </div>
+          <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-neutral-400">
+            <span class="inline-flex items-center gap-2"><i data-lucide="calendar" class="h-4 w-4 text-emerald-300"></i>14-day free trial</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="x-circle" class="h-4 w-4 text-emerald-300"></i>Cancel anytime</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="wrench" class="h-4 w-4 text-emerald-300"></i>No setup fees</span>
+          </div>
+        </div>
+
+        <!-- Mini visual: Multi-board view -->
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
+          <div class="mb-3 flex items-center justify-between">
+            <div class="text-sm font-medium text-neutral-300">Boards overview</div>
+            <div class="inline-flex items-center gap-2 text-xs text-neutral-400">
+              <i data-lucide="clock-3" class="h-4 w-4"></i>
+              This week
+            </div>
+          </div>
+          <div class="grid gap-3 md:grid-cols-2">
+            <div class="rounded-lg border border-emerald-400/20 bg-emerald-500/5 p-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold tracking-tight text-white">Marketing Site</p>
+                <span class="text-[10px] text-emerald-300">On track</span>
+              </div>
+              <div class="mt-2 h-2 w-full rounded bg-white/10">
+                <div class="h-2 w-3/4 rounded bg-emerald-400/80"></div>
+              </div>
+              <div class="mt-2 text-[11px] text-neutral-300">3 days to launch</div>
+            </div>
+
+            <div class="rounded-lg border border-amber-400/20 bg-amber-500/5 p-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold tracking-tight text-white">Mobile App</p>
+                <span class="text-[10px] text-amber-300">At risk</span>
+              </div>
+              <div class="mt-2 h-2 w-full rounded bg-white/10">
+                <div class="h-2 w-2/5 rounded bg-amber-400/80"></div>
+              </div>
+              <div class="mt-2 text-[11px] text-neutral-300">2 critical reviews pending</div>
+            </div>
+
+            <div class="rounded-lg border border-indigo-400/20 bg-indigo-500/5 p-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold tracking-tight text-white">API Platform</p>
+                <span class="text-[10px] text-indigo-300">Attention</span>
+              </div>
+              <div class="mt-2 h-2 w-full rounded bg-white/10">
+                <div class="h-2 w-1/2 rounded bg-indigo-400/80"></div>
+              </div>
+              <div class="mt-2 text-[11px] text-neutral-300">High WIP in Review</div>
+            </div>
+
+            <div class="rounded-lg border border-fuchsia-400/20 bg-fuchsia-500/5 p-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold tracking-tight text-white">Client A — Portal</p>
+                <span class="text-[10px] text-fuchsia-300">Healthy</span>
+              </div>
+              <div class="mt-2 h-2 w-full rounded bg-white/10">
+                <div class="h-2 w-4/5 rounded bg-fuchsia-400/80"></div>
+              </div>
+              <div class="mt-2 text-[11px] text-neutral-300">SLA: 99.9% Met</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section id="cta" class="relative">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.03] p-8 ring-1 ring-white/10 md:p-10">
+        <div class="grid items-center gap-8 lg:grid-cols-2">
+          <div>
+            <h3 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Ready to make your kanban board smarter?</h3>
+            <p class="mt-3 text-sm text-neutral-300">Join hundreds of product teams who've ditched complex project management for something that actually helps them ship faster.</p>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <a href="#" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-indigo-400 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 active:scale-[.99]">
+                <i data-lucide="rocket" class="h-4 w-4"></i>
+                Start Your Free Trial
+              </a>
+              <a id="demo" href="#" class="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/5 hover:ring-white/20">
+                <i data-lucide="calendar-clock" class="h-4 w-4"></i>
+                Schedule a Demo
+              </a>
+            </div>
+            <div class="mt-5 flex flex-wrap items-center gap-4 text-xs text-neutral-400">
+              <span class="inline-flex items-center gap-2"><i data-lucide="calendar" class="h-4 w-4 text-emerald-300"></i>14-day free trial</span>
+              <span class="inline-flex items-center gap-2"><i data-lucide="x-circle" class="h-4 w-4 text-emerald-300"></i>Cancel anytime</span>
+              <span class="inline-flex items-center gap-2"><i data-lucide="wrench" class="h-4 w-4 text-emerald-300"></i>No setup fees</span>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-medium text-neutral-300">Why teams switch</div>
+                <i data-lucide="sparkles" class="h-5 w-5 text-indigo-300"></i>
+              </div>
+              <ul class="mt-4 space-y-3 text-sm text-neutral-300">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="zap" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+                  <span>Speed: one-click actions with immediate feedback</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="brain-circuit" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+                  <span>Intelligence: AI insights and pattern recognition</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="feather" class="mt-0.5 h-4 w-4 text-emerald-300"></i>
+                  <span>Simplicity: powerful without the bloat</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pointer-events-none absolute -right-6 -top-6 hidden h-20 w-20 rounded-full bg-indigo-500/10 blur-2xl md:block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="relative">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6 py-8">
+      <div class="flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div class="flex items-center gap-3">
+          <div class="grid h-8 w-8 place-content-center rounded-md bg-white text-neutral-900 ring-1 ring-black/10">
+            <span class="text-[11px] font-semibold tracking-tight">VK</span>
+          </div>
+          <p class="text-sm text-neutral-400">© <span id="year">2025</span> ViableKanban. All rights reserved.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 text-xs text-neutral-400">
+          <span class="inline-flex items-center gap-2"><i data-lucide="calendar" class="h-4 w-4 text-emerald-300"></i>14-day free trial</span>
+          <span class="inline-flex items-center gap-2"><i data-lucide="x-circle" class="h-4 w-4 text-emerald-300"></i>Cancel anytime</span>
+          <span class="inline-flex items-center gap-2"><i data-lucide="wrench" class="h-4 w-4 text-emerald-300"></i>No setup fees</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize lucide icons with 1.5 stroke width
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.lucide) {
+        window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+      // Year
+      var y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>
