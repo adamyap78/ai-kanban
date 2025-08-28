@@ -88,12 +88,35 @@ export const validateReferer = (req: Request, res: Response, next: NextFunction)
       process.env.DOMAIN
     ].filter(Boolean);
     
-    const requestOrigin = origin || new URL(referer!).origin;
+    let requestOrigin = origin;
+    
+    // Handle null origin case (common with direct form submissions)
+    if (!requestOrigin && referer) {
+      try {
+        requestOrigin = new URL(referer).origin;
+      } catch (e) {
+        console.log('❌ Invalid referer URL:', referer);
+        return res.status(403).render('pages/error', { 
+          title: 'Forbidden',
+          error: { message: 'Invalid request origin' },
+          hx: false 
+        });
+      }
+    }
+    
+    // If still no origin, check if host matches expected domain
+    if (!requestOrigin) {
+      const expectedHost = process.env.DOMAIN ? new URL(process.env.DOMAIN).host : host;
+      if (host === expectedHost) {
+        console.log('✅ Same-site request detected via host header');
+        return next();
+      }
+    }
     
     console.log('🔍 Request origin:', requestOrigin);
     console.log('🔍 Allowed origins:', allowedOrigins);
     
-    if (!allowedOrigins.includes(requestOrigin)) {
+    if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
       console.log('❌ Origin not allowed');
       return res.status(403).render('pages/error', { 
         title: 'Forbidden',
