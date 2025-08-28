@@ -12,14 +12,14 @@ router.use(flashMessages);
 // GET /dashboard
 router.get('/', async (req, res) => {
   try {
-    // Get all user's boards across organizations
-    const boards = await boardService.getAllUserBoards(req.user!.id);
+    // Get user's organizations with their boards
+    const organizationsWithBoards = await boardService.getUserOrganizationsWithBoards(req.user!.id);
     
     res.render('pages/dashboard', {
       title: 'Dashboard',
       hx: false,
       user: req.user,
-      boards,
+      organizationsWithBoards,
     });
   } catch (error) {
     console.error('❌ Error loading dashboard:', error);

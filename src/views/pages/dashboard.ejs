@@ -9,7 +9,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Create Board
+            Create Organization
         </a>
     </div>
 </div>
@@ -27,77 +27,143 @@
     </div>
 <% } %>
 
-<!-- Boards Grid -->
-<% if (boards && boards.length > 0) { %>
-    <div class="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-        <% boards.forEach(board => { %>
-            <a href="/orgs/<%= board.organization.slug %>/boards/<%= board.id %>" 
-               class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300 hover:border-primary/50">
-                <div class="card-body p-6">
-                    <div class="flex justify-between items-start mb-3">
-                        <h2 class="card-title text-lg text-base-content"><%= board.name %></h2>
-                        <div class="badge badge-outline badge-sm"><%= board.organization.name %></div>
+<!-- Organizations and Boards -->
+<% if (organizationsWithBoards && organizationsWithBoards.length > 0) { %>
+    <div class="space-y-8">
+        <% organizationsWithBoards.forEach(org => { %>
+            <div class="space-y-4">
+                <!-- Organization Header -->
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-semibold text-base-content"><%= org.name %></h2>
+                        <div class="badge badge-outline badge-sm"><%= org.role %></div>
                     </div>
-                    
-                    <% if (board.description) { %>
-                        <p class="text-base-content/70 text-sm mb-4 line-clamp-2"><%= board.description %></p>
-                    <% } else { %>
-                        <p class="text-base-content/50 text-sm mb-4 italic">No description</p>
-                    <% } %>
-                    
-                    <div class="flex justify-between items-center text-xs text-base-content/50">
-                        <span>Updated <%= new Date(board.updatedAt).toLocaleDateString() %></span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
+                    <div class="flex gap-2">
+                        <% if (org.boards.length === 0 && org.role === 'owner') { %>
+                            <button class="btn btn-error btn-sm" onclick="confirmDeleteOrg('<%= org.slug %>', '<%= org.name %>')">
+                                Delete Organization
+                            </button>
+                        <% } %>
+                        <a href="/orgs/<%= org.slug %>" class="btn btn-neutral btn-sm">View Organization</a>
                     </div>
                 </div>
-            </a>
+                
+                <!-- Boards Grid -->
+                <div class="grid gap-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2">
+                    <!-- Existing Boards -->
+                    <% org.boards.forEach(board => { %>
+                        <a href="/orgs/<%= org.slug %>/boards/<%= board.id %>" 
+                           class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300 hover:border-primary/50">
+                            <div class="card-body p-4">
+                                <h3 class="card-title text-base text-base-content mb-2"><%= board.name %></h3>
+                                
+                                <% if (board.description) { %>
+                                    <p class="text-base-content/70 text-xs mb-3 line-clamp-2"><%= board.description %></p>
+                                <% } else { %>
+                                    <p class="text-base-content/50 text-xs mb-3 italic">No description</p>
+                                <% } %>
+                                
+                                <div class="flex justify-between items-center text-xs text-base-content/50">
+                                    <span>Updated <%= new Date(board.updatedAt).toLocaleDateString() %></span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                    <% }); %>
+                    
+                    <!-- Create Board Card -->
+                    <a href="/orgs/<%= org.slug %>/boards/new" 
+                       class="card bg-base-200 border-2 border-dashed border-base-300 hover:border-primary/50 hover:bg-base-300 transition-all">
+                        <div class="card-body p-4 flex items-center justify-center text-center">
+                            <div class="text-base-content/60">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <p class="text-sm font-medium">Create Board</p>
+                                <p class="text-xs mt-1">Add a new board to <%= org.name %></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
         <% }); %>
     </div>
 <% } else { %>
-    <!-- Empty State -->
+    <!-- Empty State - No Organizations -->
     <div class="text-center py-16">
         <div class="max-w-md mx-auto">
-            <div class="text-6xl mb-6">🎯</div>
-            <h3 class="text-2xl font-semibold text-base-content mb-4">No boards yet</h3>
-            <p class="text-base-content/70 mb-8">Create your first board to start organizing your work</p>
+            <div class="text-6xl mb-6">🏢</div>
+            <h3 class="text-2xl font-semibold text-base-content mb-4">No organizations yet</h3>
+            <p class="text-base-content/70 mb-8">Create your first organization to start organizing your work with boards</p>
             <div class="space-y-4">
                 <a href="/orgs/new" class="btn btn-primary btn-lg">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Create Your First Board
+                    Create Your First Organization
                 </a>
-                <div class="text-sm text-base-content/50">
-                    You'll need to create an organization first
-                </div>
             </div>
         </div>
     </div>
 <% } %>
 
-<!-- Quick Stats (if boards exist) -->
-<% if (boards && boards.length > 0) { %>
+<!-- Quick Stats (if organizations exist) -->
+<% if (organizationsWithBoards && organizationsWithBoards.length > 0) { %>
+    <% 
+        const totalBoards = organizationsWithBoards.reduce((sum, org) => sum + org.boards.length, 0);
+        const mostRecentBoard = organizationsWithBoards
+            .flatMap(org => org.boards.map(board => ({...board, orgName: org.name})))
+            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0];
+    %>
+    
     <div class="mt-12 pt-8 border-t border-base-300">
         <div class="stats stats-horizontal shadow-sm">
             <div class="stat">
                 <div class="stat-title">Total Boards</div>
-                <div class="stat-value text-primary"><%= boards.length %></div>
+                <div class="stat-value text-primary"><%= totalBoards %></div>
                 <div class="stat-desc">Across all organizations</div>
             </div>
             
             <div class="stat">
                 <div class="stat-title">Organizations</div>
-                <div class="stat-value text-secondary"><%= [...new Set(boards.map(b => b.organization.id))].length %></div>
+                <div class="stat-value text-secondary"><%= organizationsWithBoards.length %></div>
                 <div class="stat-desc">Workspaces you belong to</div>
             </div>
             
-            <div class="stat">
-                <div class="stat-title">Most Recent</div>
-                <div class="stat-value text-accent text-sm"><%= boards[0].name %></div>
-                <div class="stat-desc">Updated <%= new Date(boards[0].updatedAt).toLocaleDateString() %></div>
-            </div>
+            <% if (mostRecentBoard) { %>
+                <div class="stat">
+                    <div class="stat-title">Most Recent</div>
+                    <div class="stat-value text-accent text-sm"><%= mostRecentBoard.name %></div>
+                    <div class="stat-desc">Updated <%= new Date(mostRecentBoard.updatedAt).toLocaleDateString() %></div>
+                </div>
+            <% } %>
         </div>
     </div>
 <% } %>
+
+<script>
+async function confirmDeleteOrg(orgSlug, orgName) {
+    if (confirm(`Are you sure you want to delete "${orgName}"? This action cannot be undone.`)) {
+        try {
+            const response = await fetch(`/orgs/${orgSlug}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to delete organization');
+            }
+            
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting organization:', error);
+            alert('Failed to delete organization: ' + error.message);
+        }
+    }
+}
+</script>

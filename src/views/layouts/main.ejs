@@ -14,12 +14,12 @@
     <% } %>
 </head>
 <body>
-    <header class="navbar bg-base-100 shadow-sm fixed top-0 left-0 right-0 z-50">
+    <header class="navbar bg-neutral text-neutral-content shadow-sm fixed top-0 left-0 right-0 z-50">
         <div class="navbar-start">
             <% if (locals.user) { %>
-                <a href="/dashboard" class="btn btn-ghost text-xl font-bold text-base-content">Viable Kanban</a>
+                <a href="/dashboard" class="btn btn-ghost text-xl font-bold">Viable Kanban</a>
             <% } else { %>
-                <a href="/" class="btn btn-ghost text-xl font-bold text-base-content">Viable Kanban</a>
+                <a href="/" class="btn btn-ghost text-xl font-bold">Viable Kanban</a>
             <% } %>
         </div>
         <div class="navbar-end">

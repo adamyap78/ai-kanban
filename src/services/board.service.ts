@@ -21,6 +21,14 @@ export interface BoardWithOrganization extends Board {
   };
 }
 
+export interface OrganizationWithBoards {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+  boards: Board[];
+}
+
 export class BoardService {
   async create(data: {
     name: string;
@@ -258,6 +266,55 @@ export class BoardService {
         slug: board.orgSlug,
       },
     }));
+  }
+
+  async getUserOrganizationsWithBoards(userId: string): Promise<OrganizationWithBoards[]> {
+    console.log('🏢 Getting organizations with boards for user:', userId);
+
+    // Get all organizations the user belongs to with their role
+    const userOrgs = await db.select({
+      orgId: organizations.id,
+      orgName: organizations.name,
+      orgSlug: organizations.slug,
+      role: userOrganizations.role,
+    })
+      .from(organizations)
+      .innerJoin(userOrganizations, eq(userOrganizations.organizationId, organizations.id))
+      .where(eq(userOrganizations.userId, userId))
+      .orderBy(organizations.name);
+
+    // For each organization, get its boards
+    const organizationsWithBoards: OrganizationWithBoards[] = [];
+    
+    for (const userOrg of userOrgs) {
+      const orgBoards = await db.select()
+        .from(boards)
+        .where(and(
+          eq(boards.organizationId, userOrg.orgId),
+          isNull(boards.archivedAt)
+        ))
+        .orderBy(desc(boards.updatedAt));
+
+      organizationsWithBoards.push({
+        id: userOrg.orgId,
+        name: userOrg.orgName,
+        slug: userOrg.orgSlug,
+        role: userOrg.role,
+        boards: orgBoards.map(board => ({
+          id: board.id,
+          name: board.name,
+          description: board.description,
+          organizationId: board.organizationId,
+          createdBy: board.createdBy,
+          createdAt: board.createdAt!,
+          updatedAt: board.updatedAt!,
+          archivedAt: board.archivedAt,
+        })),
+      });
+    }
+
+    console.log(`✅ Found ${organizationsWithBoards.length} organizations with boards for user`);
+    return organizationsWithBoards;
   }
 }
 

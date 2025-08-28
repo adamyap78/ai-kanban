@@ -144,4 +144,37 @@ router.post('/:slug/settings', async (req, res) => {
   }
 });
 
+// POST /orgs/:slug/delete - Delete organization
+router.post('/:slug/delete', async (req, res) => {
+  console.log('🗑️ Deleting organization:', req.params.slug);
+  
+  try {
+    const organization = await organizationService.getBySlug(req.params.slug, req.user!.id);
+    
+    if (!organization) {
+      return res.status(404).json({ error: 'Organization not found' });
+    }
+
+    // Check if user has owner permissions
+    if (organization.userRole !== 'owner') {
+      return res.status(403).json({ error: 'Only organization owners can delete organizations' });
+    }
+
+    // Check if organization has any boards
+    const boards = await boardService.getByOrganization(organization.id, req.user!.id);
+    if (boards.length > 0) {
+      return res.status(400).json({ error: 'Cannot delete organization with existing boards' });
+    }
+
+    await organizationService.delete(organization.id, req.user!.id);
+
+    console.log('✅ Organization deleted successfully');
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('❌ Organization deletion failed:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to delete organization';
+    return res.status(500).json({ error: errorMessage });
+  }
+});
+
 export default router;

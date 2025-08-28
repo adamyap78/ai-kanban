@@ -168,6 +168,43 @@ export class OrganizationService {
       userRole: userOrg[0]!.role,
     };
   }
+
+  async delete(orgId: string, userId: string): Promise<void> {
+    console.log('🗑️ Deleting organization:', orgId);
+
+    // Check if user has owner permission
+    const userOrg = await db.select()
+      .from(userOrganizations)
+      .where(and(
+        eq(userOrganizations.organizationId, orgId),
+        eq(userOrganizations.userId, userId)
+      ))
+      .limit(1);
+
+    if (userOrg.length === 0 || userOrg[0]!.role !== 'owner') {
+      throw new Error('Only organization owners can delete organizations');
+    }
+
+    // Check if organization has any boards
+    const orgBoards = await db.select()
+      .from(boards)
+      .where(eq(boards.organizationId, orgId))
+      .limit(1);
+
+    if (orgBoards.length > 0) {
+      throw new Error('Cannot delete organization with existing boards');
+    }
+
+    // Delete user-organization relationships first
+    await db.delete(userOrganizations)
+      .where(eq(userOrganizations.organizationId, orgId));
+
+    // Delete organization
+    await db.delete(organizations)
+      .where(eq(organizations.id, orgId));
+
+    console.log('✅ Organization deleted successfully');
+  }
 }
 
 export const organizationService = new OrganizationService();
