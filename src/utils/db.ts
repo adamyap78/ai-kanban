@@ -1,15 +1,15 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from '../db/schema';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 
-const sqlite = new Database(process.env.DATABASE_URL || './local.db');
+const client = createClient({
+  url: process.env.TURSO_DATABASE_URL || `file:${process.env.DATABASE_URL || './local.db'}`,
+  ...(process.env.TURSO_AUTH_TOKEN && { authToken: process.env.TURSO_AUTH_TOKEN }),
+});
 
-// Enable WAL mode for better performance
-sqlite.pragma('journal_mode = WAL');
-
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(client, { schema });
 
 export default db;

@@ -3408,6 +3408,9 @@
   .text-indigo-300 {
     color: var(--color-indigo-300);
   }
+  .text-neutral {
+    color: var(--color-neutral);
+  }
   .text-neutral-200 {
     color: var(--color-neutral-200);
   }
